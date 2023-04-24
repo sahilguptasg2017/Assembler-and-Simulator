@@ -40,9 +40,18 @@ for i in y:
             z[k]=z[k].strip()
             k+=1
         print(z)
-        for u in z:
-            s+=operations[u]
-            
+        n=0
+        while n<len(z):
+            if z[0]=='mov':
+                if '$' in z[2]:
+                    s+=operations['mov']
+                    n+=1
+                else:
+                    s+=operations['mov1']
+                    n+=1
+                
+            n+=1        
+
 
 
 
