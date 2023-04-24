@@ -49,8 +49,9 @@ for i in y:
                 else:
                     s+=operations['mov1']
                     n+=1
-                
-            n+=1        
+            else:                
+                s+=operations[z[0]]
+                n += 1
 
 
 
