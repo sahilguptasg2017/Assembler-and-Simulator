@@ -49,15 +49,9 @@ for i in y:
                 else:
                     s+=operations['mov1']
                     n+=1
-<<<<<<< HEAD
-                
-
-            n+=1        
-=======
             else:                
                 s+=operations[z[0]]
                 n += 1
->>>>>>> 4a76f950f2a5be73a8541cd451f3f4cfa54b9ac8
 
 
 
