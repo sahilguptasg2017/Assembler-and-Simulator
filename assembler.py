@@ -44,5 +44,7 @@ for i in y:
             s+=operations[u]
             
 
+
+
                 
 
