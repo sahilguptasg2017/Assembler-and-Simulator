@@ -50,6 +50,7 @@ for i in y:
                     s+=operations['mov1']
                     n+=1
                 
+
             n+=1        
 
 
