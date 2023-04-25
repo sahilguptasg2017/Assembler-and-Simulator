@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 operations={"add":'00000',
             'sub':'00001',
             'mov':'00010',
@@ -28,33 +30,36 @@ registers={'R0':'000',
            'R6':'110',
            'FLAGS':'111'}
 
-x=open(r"C:\Sahil\Python\CSE112-Assignment\input.txt","r+")
+x=open("input.txt","r+")
 y=x.readlines()
 print(y)
+
 for i in y:
+
     s=""
-    if i!='\n':
-        z=i.split(" ")
-        k=0
-        while k<len(z):
-            z[k]=z[k].strip()
-            k+=1
-        print(z)
-        n=0
-        while n<len(z):
-            if z[0]=='mov':
-                if '$' in z[2]:
-                    s+=operations['mov']
-                    n+=1
-                else:
-                    s+=operations['mov1']
-                    n+=1
-            else:                
-                s+=operations[z[0]]
-                n += 1
+    cmd = i.strip()
 
+    if not cmd:
+        continue
+    z=cmd.split()
 
+    k=0
+    while k<len(z):
+        z[k]=z[k].strip()
+        k+=1
+    print(z)
 
+    n=0
+    while n<len(z):
+        if z[0]=='mov':
+            if '$' in z[2]:
+                s+=operations['mov']
+                n+=1
+            else:
+                s+=operations['mov1']
+                n+=1
+        else:                
+            s+=operations[z[0]]
+            n += 1
 
-                
-
+    print(s)
