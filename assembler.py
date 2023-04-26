@@ -41,17 +41,34 @@ for i in y:
             k+=1
         print(z)
         n=0
-        while n<len(z):
-            if z[0]=='mov':
-                if '$' in z[2]:
-                    s+=operations['mov']
-                    n+=1
-                else:
-                    s+=operations['mov1']
-                    n+=1
-            else:                
-                s+=operations[z[0]]
-                n += 1
+        if z[0]!='var':
+                if z[0]=='mov':
+                    if '$' in z[2]:
+                        s+=operations['mov']
+                        s+='0'
+                        s+=registers[z[1]]
+                        if len((bin(z[2][1:]))[2:])<7:
+                            s+='0'*(7-len((bin(z[2][1:]))[2:]))
+                            s+=(bin((z[2])[1:]))[2:]
+                            print(f's\n')
+                        else:
+                            s+=(bin((z[2])[1:]))[2:]
+                            print(s+"\n")    
+                    else:
+                        s+=operations['mov1']
+                        s+='0'*5
+                        s+=registers[z[1]]
+                        s+=registers[z[2]]
+                        print(s+"\n")
+                elif z[0]=='mul':
+                    s+=operations['mul']
+                    s+='0'*2
+                    s+=registers[z[1]]
+                    s+=registers[z[2]]
+                    s+=registers[z[3]]
+                    print(s+"\n")
+                elif z[0]==''    
+                    
 
 
 
