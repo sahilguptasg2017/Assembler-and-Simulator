@@ -70,6 +70,12 @@ for i in y:
                     s+=registers[z[2]]
                     s+=registers[z[3]]
                     print(s+"\n")
-                elif z[0]==''    
-                    
+                elif z[0]=='st':
+                    s+=operations['st']    
+                    s+='0'
+                    s+=registers[z[1]]
+                    s+='0'*(16-len(s))
+                    print(s+"\n")
+                   
 
+    
