@@ -30,7 +30,7 @@ registers={'R0':'000',
            'R6':'110',
            'FLAGS':'111'}
 
-x=open("input.txt","r+")
+x=open(r"stdin.txt","r+")
 y=x.readlines()
 print(y)
 
@@ -76,6 +76,7 @@ for i in y:
                     s+=registers[z[1]]
                     s+='0'*(16-len(s))
                     print(s+"\n")
+                        
                    
 
     
