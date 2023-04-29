@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 operations={"add":'00000',
             'sub':'00001',
             'mov':'00010',
@@ -37,11 +35,17 @@ print(y)
 for i in y:
     s=""
     if i!='\n':
-        z=i.split(" ")
+        z1=i.split(" ")
         k=0
-        while k<len(z):
-            z[k]=z[k].strip()
+        while k<len(z1):
+            z1[k]=z1[k].strip()
             k+=1
+        print(z1)
+        z=[]
+        for t in z1:   
+            if t!='':
+                z.append(t)
+
         print(z)
         n=0
         if z[0]!='var':
@@ -50,33 +54,45 @@ for i in y:
                         s+=operations['mov']
                         s+='0'
                         s+=registers[z[1]]
-                        if len((bin(z[2][1:]))[2:])<7:
-                            s+='0'*(7-len((bin(z[2][1:]))[2:]))
-                            s+=(bin((z[2])[1:]))[2:]
-                            print(f's\n')
-                        else:
-                            s+=(bin((z[2])[1:]))[2:]
-                            print(s+"\n")    
+                        s+='0'*(7-len(bin(int(z[2][1:]))[2:]))
+                        s+=bin(int(z[2][1:]))[2:]    
+                        print(f'{s}\n')
                     else:
                         s+=operations['mov1']
                         s+='0'*5
                         s+=registers[z[1]]
                         s+=registers[z[2]]
-                        print(s+"\n")
+                        print(f'{s}\n')
                 elif z[0]=='mul':
                     s+=operations['mul']
                     s+='0'*2
                     s+=registers[z[1]]
                     s+=registers[z[2]]
                     s+=registers[z[3]]
-                    print(s+"\n")
+                    print(f'{s}\n')
                 elif z[0]=='st':
                     s+=operations['st']    
                     s+='0'
                     s+=registers[z[1]]
                     s+='0'*(16-len(s))
-                    print(s+"\n")
-                        
-                   
-
+                    print(f'{s}\n')
+                elif z[0]=='hlt':
+                    s+=operations['hlt']
+                    s+=11*'0'
+                    print(f'{s}\n')
+                elif z[0]=='add':
+                    s+=operations['add']
+                    s+='0'*2
+                    s+=registers[z[1]]
+                    s+=registers[z[2]]
+                    s+=registers[z[3]]
+                    print(f'{s}\n')
+                elif z[0]=='sub':
+                    s+=operations['sub']
+                    s+='0'*2
+                    s+=registers[z[1]]
+                    s+=registers[z[2]]
+                    s+=registers[z[3]]
+                    print(f'{s}\n')
+                elif      
     
