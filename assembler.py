@@ -94,5 +94,5 @@ for i in y:
                     s+=registers[z[2]]
                     s+=registers[z[3]]
                     print(f'{s}\n')
-                elif      
+                elif 
     
