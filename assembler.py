@@ -31,6 +31,28 @@ registers={'R0':'000',
 x=open(r"stdin.txt","r+")
 y=x.readlines()
 print(y)
+count=0
+
+for n in y:
+    if 'var' in n:
+        count+=1
+print(count)        
+        
+count1=-count
+
+for u in y:
+    if u!='\n':
+        count1+=1
+print(count1) 
+
+d={}
+
+for r in y:
+    if 'var' in r:
+        
+        d[r[4]]=count1
+        count1+=1        
+print(d)
 
 for i in y:
     s=""
@@ -74,7 +96,7 @@ for i in y:
                     s+=operations['st']    
                     s+='0'
                     s+=registers[z[1]]
-                    s+='0'*(16-len(s))
+                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
                     print(f'{s}\n')
                 elif z[0]=='hlt':
                     s+=operations['hlt']
@@ -94,5 +116,20 @@ for i in y:
                     s+=registers[z[2]]
                     s+=registers[z[3]]
                     print(f'{s}\n')
-                elif 
-    
+                elif z[0]=='ld':
+                    s+=operations['ld']
+                    s+='0'*1
+                    s+=registers[z[1]]
+                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+
+                    
+
+                    
+
+
+
+
+
+
+
+
