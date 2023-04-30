@@ -49,8 +49,9 @@ d={}
 
 for r in y:
     if 'var' in r:
-        
-        d[r[4]]=count1
+        r=r.replace(" ","")
+        print(r)
+        d[r[3]]=count1
         count1+=1        
 print(d)
 
@@ -121,6 +122,14 @@ for i in y:
                     s+='0'*1
                     s+=registers[z[1]]
                     s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+                    print(f'{s}\n')
+                elif z[0]=='div':
+                    s+=operations['div']
+                    s+='0'*5
+                    s+=registers[z[1]]
+                    s+=registers[z[2]]
+                elif z[0]==''        
+
 
                     
 
