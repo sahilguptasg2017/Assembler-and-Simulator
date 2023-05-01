@@ -39,27 +39,27 @@ for line in inp_lines:
         var_count+=1
 #file_1.write(count)        
         
-count1=-var_count
+instr_count=-var_count   
 
 for line in inp_lines:
     if line!='\n':
-        count1+=1
+        instr_count+=1
 #file_1.write(count1) 
 
-d={}
-
-for r in inp_lines:
-    if 'var' in r:
-        r=r.replace(" ","")
+# Writing number allocation for each variable
+var_dict={}
+for line in inp_lines:
+    if 'var' in line:
+        line=line.replace(" ","")
         #file_1.write(r)
-        d[r[3]]=count1
-        count1+=1        
+        var_dict[line[3]]=instr_count
+        instr_count+=1
 #file_1.write(d)
 
-for i in inp_lines:
+for line in inp_lines:
     s=""
-    if i!='\n':
-        z1=i.split(" ")
+    if line!='\n':
+        z1=line.split(" ")
         k=0
         while k<len(z1):
             z1[k]=z1[k].strip()
@@ -98,7 +98,7 @@ for i in inp_lines:
                     s+=operations['st']    
                     s+='0'
                     s+=registers[z[1]]
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
                     out_file.write(f'{s}\n')
                 elif z[0]=='hlt':
                     s+=operations['hlt']
@@ -123,7 +123,7 @@ for i in inp_lines:
                     s+=operations['ld']
                     s+='0'*1
                     s+=registers[z[1]]
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
                     out_file.write(f'{s}\n')
                 elif z[0]=='div':
                     s+=operations['div']
@@ -179,22 +179,22 @@ for i in inp_lines:
                 elif z[0]=='jmp':
                     s+=operations['cmp']
                     s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
                     out_file.write(f'{s}\n')
                 elif z[0]=='jlt':
                     s+=operations['jlt']
                     s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
                     out_file.write(f'{s}\n')
                 elif z[0]=='jgt':
                     s+=operations['jgt']
                     s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
                     out_file.write(f'{s}\n')        
                 elif z[0]=='je':
                     s+=operations['je']
                     s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
+                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
                     out_file.write(f'{s}\n')
                     
 
