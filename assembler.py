@@ -1,3 +1,4 @@
+# Dictionary for instruction set of operations in binary
 operations={"add":'00000',
             'sub':'00001',
             'mov':'00010',
@@ -18,7 +19,7 @@ operations={"add":'00000',
             'jgt':'11101',
             'je':'11111',
             'hlt':'11010'}
-
+# Dictionary for register addresses in binary
 registers={'R0':'000',
            'R1':'001',
            'R2':'010',
@@ -28,23 +29,24 @@ registers={'R0':'000',
            'R6':'110',
            'FLAGS':'111'}
 
+# Opening and reading input file
 inp_file=open(r"stdin.txt","r+")
-out_file=open(r"stdout.txt","w")
 inp_lines=inp_file.readlines()
-#file_1.write(y)
-var_count=0
 
+# Opening output file
+out_file=open(r"stdout.txt","w")
+
+# Counting number of vars
+var_count=0
 for line in inp_lines:
     if 'var' in line:
         var_count+=1
-#file_1.write(count)        
         
+# Counting number of instructions
 instr_count=-var_count   
-
 for line in inp_lines:
     if line!='\n':
         instr_count+=1
-#file_1.write(count1) 
 
 # Writing number allocation for each variable
 var_dict={}
@@ -54,7 +56,7 @@ for line in inp_lines:
         #file_1.write(r)
         var_dict[line[3]]=instr_count
         instr_count+=1
-#file_1.write(d)
+
 
 for line in inp_lines:
     s=""
