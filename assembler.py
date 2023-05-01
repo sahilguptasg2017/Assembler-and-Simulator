@@ -196,7 +196,7 @@ for i in y:
                     s+='0'*4
                     s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
                     file_1.write(f'{s}\n')
-                    
+                                    
 
 
                     
