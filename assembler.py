@@ -104,100 +104,6 @@ for line in inp_lines:
                     out_str+=11*'0'
                     out_file.write(f'{out_str}\n')
                     break
-<<<<<<< HEAD
-                elif z[0]=='add':
-                    +=operations['add']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='sub':
-                    s+=operations['sub']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='ld':
-                    s+=operations['ld']
-                    s+='0'*1
-                    s+=registers[z[1]]
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='div':
-                    s+=operations['div']
-                    s+='0'*5
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='rs':
-                    s+=operations['rs']
-                    s+='0'*1
-                    s+=registers[z[1]]
-                    s+=bin(int(z[2][1:]))[2:]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='ls':
-                    s+=operations['ls']
-                    s+='0'*1
-                    s+=registers[z[1]]
-                    s+=bin(int(z[2][1:]))[2:]    
-                    file_1.write(f'{s}\n')
-                elif z[0]=='xor':
-                    s+=operations['xor']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='or':
-                    s+=operations['or']    
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='and':
-                    s+=operations['and']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='not':
-                    s+=operations['not']
-                    s+='0'*5
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]  
-                    file_1.write(f'{s}\n')
-                elif z[0]=='cmp':
-                    s+=operations['cmp']
-                    s+='0'*5
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='jmp':
-                    s+=operations['cmp']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='jlt':
-                    s+=operations['jlt']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
-                    file_1.write(f'{s}\n')
-                elif z[0]=='jgt':
-                    s+=operations['jgt']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
-                    file_1.write(f'{s}\n')        
-                elif z[0]=='je':
-                    s+=operations['je']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(d[z[2]])[2:]))+bin(d[z[2]])[2:]
-                    file_1.write(f'{s}\n')
-                                    
-=======
                 elif instruction[0]=='add':
                     out_str+=operations['add']
                     out_str+='0'*2
@@ -289,15 +195,6 @@ for line in inp_lines:
                     out_str+='0'*4
                     out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                     out_file.write(f'{out_str}\n')
-                    
->>>>>>> fd2bf167dacf8b1f558456c52aa8376ebf421447
-
-
-                    
-
-
-
-
 
 
 
