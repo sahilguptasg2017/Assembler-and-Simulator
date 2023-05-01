@@ -106,7 +106,7 @@ for line in inp_lines:
                     break
 <<<<<<< HEAD
                 elif z[0]=='add':
-                    s+=operations['add']
+                    +=operations['add']
                     s+='0'*2
                     s+=registers[z[1]]
                     s+=registers[z[2]]
