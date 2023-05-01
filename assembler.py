@@ -48,156 +48,153 @@ for line in inp_lines:
     if line!='\n':
         instr_count+=1
 
-# Writing number allocation for each variable
+# Storing position allocation for each variable in var_dict
 var_dict={}
 for line in inp_lines:
     if 'var' in line:
         line=line.replace(" ","")
-        #file_1.write(r)
         var_dict[line[3]]=instr_count
         instr_count+=1
 
 
 for line in inp_lines:
-    s=""
+    # Storing the instruction in list
     if line!='\n':
-        z1=line.split(" ")
+        words=line.split(" ")
         k=0
-        while k<len(z1):
-            z1[k]=z1[k].strip()
+        while k<len(words):
+            words[k]=words[k].strip()
             k+=1
-     #   file_1.write(z1)
-        z=[]
-        for t in z1:   
+        instruction=[]
+        for t in words:   
             if t!='':
-                z.append(t)
-
- #       file_1.write(z)
-        n=0
-        if z[0]!='var':
-                if z[0]=='mov':
-                    if '$' in z[2]:
-                        s+=operations['mov']
-                        s+='0'
-                        s+=registers[z[1]]
-                        s+='0'*(7-len(bin(int(z[2][1:]))[2:]))
-                        s+=bin(int(z[2][1:]))[2:]    
-                        out_file.write(f'{s}\n')
+                instruction.append(t)
+        # Reading, interpreting instruction and writing corresponding binary to stdout.txt
+        out_str=""
+        if instruction[0]!='var':
+                if instruction[0]=='mov':
+                    if '$' in instruction[2]:
+                        out_str+=operations['mov']
+                        out_str+='0'
+                        out_str+=registers[instruction[1]]
+                        out_str+='0'*(7-len(bin(int(instruction[2][1:]))[2:]))
+                        out_str+=bin(int(instruction[2][1:]))[2:]    
+                        out_file.write(f'{out_str}\n')
                     else:
-                        s+=operations['mov1']
-                        s+='0'*5
-                        s+=registers[z[1]]
-                        s+=registers[z[2]]
-                        out_file.write(f'{s}\n')
-                elif z[0]=='mul':
-                    s+=operations['mul']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='st':
-                    s+=operations['st']    
-                    s+='0'
-                    s+=registers[z[1]]
-                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='hlt':
-                    s+=operations['hlt']
-                    s+=11*'0'
-                    out_file.write(f'{s}\n')
+                        out_str+=operations['mov1']
+                        out_str+='0'*5
+                        out_str+=registers[instruction[1]]
+                        out_str+=registers[instruction[2]]
+                        out_file.write(f'{out_str}\n')
+                elif instruction[0]=='mul':
+                    out_str+=operations['mul']
+                    out_str+='0'*2
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_str+=registers[instruction[3]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='st':
+                    out_str+=operations['st']    
+                    out_str+='0'
+                    out_str+=registers[instruction[1]]
+                    out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='hlt':
+                    out_str+=operations['hlt']
+                    out_str+=11*'0'
+                    out_file.write(f'{out_str}\n')
                     break
-                elif z[0]=='add':
-                    s+=operations['add']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='sub':
-                    s+=operations['sub']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='ld':
-                    s+=operations['ld']
-                    s+='0'*1
-                    s+=registers[z[1]]
-                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='div':
-                    s+=operations['div']
-                    s+='0'*5
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='rs':
-                    s+=operations['rs']
-                    s+='0'*1
-                    s+=registers[z[1]]
-                    s+=bin(int(z[2][1:]))[2:]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='ls':
-                    s+=operations['ls']
-                    s+='0'*1
-                    s+=registers[z[1]]
-                    s+=bin(int(z[2][1:]))[2:]    
-                    out_file.write(f'{s}\n')
-                elif z[0]=='xor':
-                    s+=operations['xor']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='or':
-                    s+=operations['or']    
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='and':
-                    s+=operations['and']
-                    s+='0'*2
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    s+=registers[z[3]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='not':
-                    s+=operations['not']
-                    s+='0'*5
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]  
-                    out_file.write(f'{s}\n')
-                elif z[0]=='cmp':
-                    s+=operations['cmp']
-                    s+='0'*5
-                    s+=registers[z[1]]
-                    s+=registers[z[2]]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='jmp':
-                    s+=operations['cmp']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='jlt':
-                    s+=operations['jlt']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
-                    out_file.write(f'{s}\n')
-                elif z[0]=='jgt':
-                    s+=operations['jgt']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
-                    out_file.write(f'{s}\n')        
-                elif z[0]=='je':
-                    s+=operations['je']
-                    s+='0'*4
-                    s+='0'*(7-len(bin(var_dict[z[2]])[2:]))+bin(var_dict[z[2]])[2:]
-                    out_file.write(f'{s}\n')
+                elif instruction[0]=='add':
+                    out_str+=operations['add']
+                    out_str+='0'*2
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_str+=registers[instruction[3]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='sub':
+                    out_str+=operations['sub']
+                    out_str+='0'*2
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_str+=registers[instruction[3]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='ld':
+                    out_str+=operations['ld']
+                    out_str+='0'*1
+                    out_str+=registers[instruction[1]]
+                    out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='div':
+                    out_str+=operations['div']
+                    out_str+='0'*5
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='rs':
+                    out_str+=operations['rs']
+                    out_str+='0'*1
+                    out_str+=registers[instruction[1]]
+                    out_str+=bin(int(instruction[2][1:]))[2:]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='ls':
+                    out_str+=operations['ls']
+                    out_str+='0'*1
+                    out_str+=registers[instruction[1]]
+                    out_str+=bin(int(instruction[2][1:]))[2:]    
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='xor':
+                    out_str+=operations['xor']
+                    out_str+='0'*2
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_str+=registers[instruction[3]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='or':
+                    out_str+=operations['or']    
+                    out_str+='0'*2
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_str+=registers[instruction[3]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='and':
+                    out_str+=operations['and']
+                    out_str+='0'*2
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_str+=registers[instruction[3]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='not':
+                    out_str+=operations['not']
+                    out_str+='0'*5
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]  
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='cmp':
+                    out_str+=operations['cmp']
+                    out_str+='0'*5
+                    out_str+=registers[instruction[1]]
+                    out_str+=registers[instruction[2]]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='jmp':
+                    out_str+=operations['cmp']
+                    out_str+='0'*4
+                    out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='jlt':
+                    out_str+=operations['jlt']
+                    out_str+='0'*4
+                    out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
+                    out_file.write(f'{out_str}\n')
+                elif instruction[0]=='jgt':
+                    out_str+=operations['jgt']
+                    out_str+='0'*4
+                    out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
+                    out_file.write(f'{out_str}\n')        
+                elif instruction[0]=='je':
+                    out_str+=operations['je']
+                    out_str+='0'*4
+                    out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
+                    out_file.write(f'{out_str}\n')
                     
 
 
