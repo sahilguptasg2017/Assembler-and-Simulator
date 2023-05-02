@@ -194,6 +194,10 @@ for line in inp_lines:
                     out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                     out_lst.append(f'{out_str}\n')
 
+# Handling errors h and i
+if instruction!="hlt":
+    exit("ERROR: Missing hlt instruction or last instruction is not hlt")
+
 # Opening output file and writing data to it given if no errors
 out_file=open(r"stdout.txt","w")
 for line in out_lst:
