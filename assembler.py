@@ -85,6 +85,7 @@ for line in inp_lines:
                         out_str+=operations['mov']
                         out_str+='0'
                         out_str+=registers[instruction[1]]
+                        #this is only possible if value <= 127..
                         out_str+='0'*(7-len(bin(int(instruction[2][1:]))[2:]))
                         out_str+=bin(int(instruction[2][1:]))[2:]    
                         out_lst.append(f'{out_str}\n')
