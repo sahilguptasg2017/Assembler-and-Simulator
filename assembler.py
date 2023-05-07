@@ -62,7 +62,7 @@ for line in inp_lines:
         #adjusting for labels by dividing it on ":" symbol.
         if ":" in line:
             line=line[line.index(":")+1:]   
-            print(line)
+            
         words=line.split(" ")
         k=0
         while k<len(words):
