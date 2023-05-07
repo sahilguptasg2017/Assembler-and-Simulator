@@ -59,6 +59,7 @@ out_lst=[]
 for line in inp_lines:
     # Storing the instruction in list
     if line!='\n':
+        #adjusting for labels by dividing it on ":" symbol.
         if ":" in line:
             line=line[line.index(":")+1:]   
             print(line)
