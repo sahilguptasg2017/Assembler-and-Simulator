@@ -47,14 +47,21 @@ for line in inp_lines:
         instr_count+=1
 
 # Storing position allocation for each variable in var_dict
+line_count=0
 var_dict={}
+out_lst=[]
 for line in inp_lines:
+    line_count+=1
     if 'var' in line:
         line=line.replace(" ","")
+        if(len(line[3:])!=2):
+            out_str=("Incorrect variable name in line " + str(line_count))
+            out_lst.append(f'{out_str}\n')
+            continue
         var_dict[line[3]]=instr_count
         instr_count+=1
 line_count = 0
-out_lst=[]
+
 
 for line in inp_lines:
     line_count+=1
@@ -78,8 +85,7 @@ for line in inp_lines:
                 if(instruction[0] not in operations.keys()):
                     out_str=("Incorrect instruction name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
-                    
-                    continue;              
+                    continue            
                 if instruction[0]=='mov':
                     if '$' in instruction[2]:
                         out_str+=operations['mov']
@@ -106,6 +112,10 @@ for line in inp_lines:
                     out_str+=operations['st']    
                     out_str+='0'
                     out_str+=registers[instruction[1]]
+                    if(instruction[2] not in var_dict.keys()):
+                        out_str=("Incorrect variable name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue 
                     out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='hlt':
