@@ -195,7 +195,7 @@ for line in inp_lines:
                     out_lst.append(f'{out_str}\n')
 
 # Handling errors h and i
-if instruction!="hlt":
+if instruction[0]!="hlt":
     exit("ERROR: Missing hlt instruction or last instruction is not hlt")
 
 # Opening output file and writing data to it given if no errors
