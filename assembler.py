@@ -55,9 +55,13 @@ for line in inp_lines:
         instr_count+=1
 
 out_lst=[]
+
 for line in inp_lines:
     # Storing the instruction in list
     if line!='\n':
+        if ":" in line:
+            line=line[line.index(":")+1:]   
+            print(line)
         words=line.split(" ")
         k=0
         while k<len(words):
@@ -203,4 +207,3 @@ out_file=open(r"stdout.txt","w")
 for line in out_lst:
     out_file.write(line)
 out_file.close()
-
