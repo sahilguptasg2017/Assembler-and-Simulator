@@ -53,9 +53,10 @@ for line in inp_lines:
         line=line.replace(" ","")
         var_dict[line[3]]=instr_count
         instr_count+=1
-
+line_count = 0
 out_lst=[]
 for line in inp_lines:
+    line_count+=1
     # Storing the instruction in list
     if line!='\n':
         words=line.split(" ")
@@ -69,7 +70,12 @@ for line in inp_lines:
                 instruction.append(t)
         # Reading, interpreting instruction and writing corresponding binary to stdout.txt
         out_str=""
-        if instruction[0]!='var':
+        if instruction[0]!='var':  
+                if(instruction[0] not in operations.keys()):
+                    out_str=("Incorrect instruction name in line " + str(line_count))
+                    out_lst.append(f'{out_str}\n')
+                    
+                    continue;              
                 if instruction[0]=='mov':
                     if '$' in instruction[2]:
                         out_str+=operations['mov']
