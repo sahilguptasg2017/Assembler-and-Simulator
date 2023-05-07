@@ -81,12 +81,21 @@ for line in inp_lines:
                 instruction.append(t)
         # Reading, interpreting instruction and writing corresponding binary to stdout.txt
         out_str=""
-        if instruction[0]!='var':  
+        if instruction[0]!='var': 
+                # error check of variable  
                 if(instruction[0] not in operations.keys()):
                     out_str=("Incorrect instruction name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
-                    continue            
+                    continue
+
+
                 if instruction[0]=='mov':
+                    # error of register
+                    if(instruction[1] not in registers.keys()):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
+
                     if '$' in instruction[2]:
                         out_str+=operations['mov']
                         out_str+='0'
@@ -102,6 +111,11 @@ for line in inp_lines:
                         out_str+=registers[instruction[2]]
                         out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='mul':
+                    # error check of register
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['mul']
                     out_str+='0'*2
                     out_str+=registers[instruction[1]]
@@ -112,6 +126,7 @@ for line in inp_lines:
                     out_str+=operations['st']    
                     out_str+='0'
                     out_str+=registers[instruction[1]]
+                    # error check of variable
                     if(instruction[2] not in var_dict.keys()):
                         out_str=("Incorrect variable name in line " + str(line_count))
                         out_lst.append(f'{out_str}\n')
@@ -124,6 +139,10 @@ for line in inp_lines:
                     out_lst.append(f'{out_str}\n')
                     break
                 elif instruction[0]=='add':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['add']
                     out_str+='0'*2
                     out_str+=registers[instruction[1]]
@@ -131,6 +150,10 @@ for line in inp_lines:
                     out_str+=registers[instruction[3]]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='sub':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['sub']
                     out_str+='0'*2
                     out_str+=registers[instruction[1]]
@@ -138,30 +161,50 @@ for line in inp_lines:
                     out_str+=registers[instruction[3]]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='ld':
+                    if(instruction[1] not in registers.keys()):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['ld']
                     out_str+='0'*1
                     out_str+=registers[instruction[1]]
                     out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='div':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['div']
                     out_str+='0'*5
                     out_str+=registers[instruction[1]]
                     out_str+=registers[instruction[2]]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='rs':
+                    if(instruction[1] not in registers.keys()):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['rs']
                     out_str+='0'*1
                     out_str+=registers[instruction[1]]
                     out_str+=bin(int(instruction[2][1:]))[2:]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='ls':
+                    if(instruction[1] not in registers.keys()):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['ls']
                     out_str+='0'*1
                     out_str+=registers[instruction[1]]
                     out_str+=bin(int(instruction[2][1:]))[2:]    
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='xor':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['xor']
                     out_str+='0'*2
                     out_str+=registers[instruction[1]]
@@ -169,6 +212,10 @@ for line in inp_lines:
                     out_str+=registers[instruction[3]]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='or':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['or']    
                     out_str+='0'*2
                     out_str+=registers[instruction[1]]
@@ -176,6 +223,10 @@ for line in inp_lines:
                     out_str+=registers[instruction[3]]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='and':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['and']
                     out_str+='0'*2
                     out_str+=registers[instruction[1]]
@@ -183,12 +234,20 @@ for line in inp_lines:
                     out_str+=registers[instruction[3]]
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='not':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['not']
                     out_str+='0'*5
                     out_str+=registers[instruction[1]]
                     out_str+=registers[instruction[2]]  
                     out_lst.append(f'{out_str}\n')
                 elif instruction[0]=='cmp':
+                    if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
+                        out_str=("Incorrect Register name in line " + str(line_count))
+                        out_lst.append(f'{out_str}\n')
+                        continue
                     out_str+=operations['cmp']
                     out_str+='0'*5
                     out_str+=registers[instruction[1]]
