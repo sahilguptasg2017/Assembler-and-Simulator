@@ -29,38 +29,121 @@ registers={'R0':'000',
            'R6':'110',
            'FLAGS':'111'}
 
+# Counting number of vars
+var_count = 0
+instr_count = 0
+
+hasVar = [True]
+varIndices = []
+var_dict={}
+labels = {}
+
+reg3ins = ["add", "sub", "mul", "xor", "or", "and"] # type A
+immins = ["mov", "rs", "ls"] # type B
+reg2ins = ["mov1", "div", "not", "cmp"] # type C
+memins = ["ld", "st"] # type D
+jmpins = ["jmp", "jlt", "jgt", "je", "hlt"] # type E
+
+# opcode to binary functions
+def ins_typeA(ins, args, line_no):
+    if(len(args) != 3):
+        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type A instruction") 
+    if not all([i in registers for i in args]):
+        exit(f"Error on line {line_no+1}: Incorrect register name in type A instruction \"{ins}\"")
+    ins_str = operations[ins] + "00"
+    ins_str += ''.join(registers[i] for i in args)
+    return ins_str
+
+def ins_typeB(ins, args, line_no):
+    if(len(args) != 2):
+        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type B instruction") 
+    if args[0] not in registers:
+        exit(f"Error on line {line_no+1}: Incorrect register name in type B instruction \"{ins}\"")
+    ins_str=operations[ins]+'0'
+    ins_str+=registers[args[0]]
+
+    if args[1][0] != '$':
+        exit(f"Error on line {line_no+1}: Incorrect format for Immediate value.")
+    for i in args[1][1:]:
+        if i not in '0123456789':
+            exit(f"Error on line {line_no+1}: Incorrect format for Immediate value.")
+
+    nm = bin(int(args[1][1:]))[2:]
+    if len(nm) > 7:
+        exit(f"Error on line {line_no+1}: Immediate value larger than 7 bits.")
+
+    ins_str+= '0'*(7-len(nm))
+    ins_str+= nm
+    return ins_str
+
+def ins_typeC(ins, args, line_no):
+    if(len(args) != 2):
+        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type A instruction") 
+    if not all([i in registers for i in args]):
+        exit(f"Error on line {line_no+1}: Incorrect register name in type A instruction \"{ins}\"")
+    ins_str = operations[ins] + "00000"
+    ins_str += ''.join(registers[i] for i in args)
+    return ins_str
+
+def ins_typeD(ins, args, line_no):
+    if(len(args) != 2):
+        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type D instruction") 
+    if args[0] not in registers:
+        exit(f"Error on line {line_no+1}: Incorrect register name in type D instruction \"{ins}\"")
+    ins_str = operations[ins] + '0'
+    ins_str+=registers[args[0]]
+
+    
+    # ins_str+='0'*(7-len(bin(var_dict[args[1]])[2:]))+bin(var_dict[args[1]])[2:]
+    return ins_str
+
+
 # Opening and reading input file
 inp_file=open(r"stdin.txt","r+")
 inp_lines=inp_file.readlines()
 inp_file.close()
 
-# Counting number of vars
-var_count=0
-for line in inp_lines:
-    if 'var' in line:
-        var_count+=1
-        
-# Counting number of instructions
-instr_count=-var_count   
-for line in inp_lines:
-    if line!='\n':
-        instr_count+=1
+
+for i in range(len(inp_lines)):
+    wrds = inp_lines[i].strip().split()
+    if not wrds:
+        continue
+    if wrds[0] == 'var':
+        if not hasVar[-1]:
+            exit(f"Error on line {i+1}: variable name declared after instructions.")
+        if len(wrds) != 2:
+            exit(f"Error on line {i+1}: incorrect number of arguments in var command.")
+        var_count += 1
+        varIndices.append(i)
+    else:
+        instr_count += 1
+    hasVar.append(wrds[0] == 'var')
+
+memIndex = instr_count
+
+for i in varIndices:
+    nm = inp_lines[i].strip().split()[1]
+    if nm in var_dict:
+        exit(f"Error on line {i+1}: variable \"{nm}\" has already been declared.")
+    var_dict[nm] = memIndex
+    memIndex += 1
+
 
 # Storing position allocation for each variable in var_dict
-line_count=0
-var_dict={}
-out_lst=[]
-for line in inp_lines:
-    line_count+=1
-    if 'var' in line:
-        line=line.replace(" ","")
-        if(len(line[3:])!=2):
-            out_str=("Incorrect variable name in line " + str(line_count))
-            out_lst.append(f'{out_str}\n')
-            continue
-        var_dict[line[3]]=instr_count
-        instr_count+=1
+
+# line_count=0
+# for line in inp_lines:
+    # line_count+=1
+    # if 'var' in line:
+        # line=line.replace(" ","")
+        # if(len(line[3:])!=2):
+            # out_str=("Incorrect variable name in line " + str(line_count))
+            # out_lst.append(f'{out_str}\n')
+            # continue
+        # var_dict[line[3]]=instr_count
+        # instr_count+=1
 line_count = 0
+out_lst=[]
 
 
 for line in inp_lines:

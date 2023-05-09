@@ -11,5 +11,6 @@ mov R2 $100
    mul      R3    R2  R1
  st R3  X   
  st R3  Y
+ ls R5 $1
  hlt_label:mov2 R1 $110
  hlt
