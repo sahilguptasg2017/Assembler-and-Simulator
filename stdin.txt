@@ -1,16 +1,9 @@
-
-
-        var     X
-
-      var     Y
-
-mov R1 $112
-
-mov R2 $100
-
-   mul      R3    R2  R1
- st R3  X   
- st R3  Y
- ls R5 $1
- hlt_label:mov2 R1 $110
- hlt
+var var1
+var var2
+var var3
+ld R1 var1
+ld R2 var2
+st R3 var3
+jmp hlt_label
+add R1 R2 R3
+hlt_label: hlt
