@@ -140,7 +140,7 @@ def file_read():
     return inp_lines
 
 # Function to write output to output file
-def file_write():
+def file_write(out_lst):
     out_file=open(r"stdout.txt","w")
     for line in out_lst:
         out_file.write(line)
@@ -176,7 +176,6 @@ for i in varIndices:
 
 
 line_count = 0
-out_lst=[]
 
 # make labels dict
 
@@ -193,52 +192,57 @@ for i in range(len(inp_lines)):
         labels[line[0][:-1]] = '0'*(7-len(bin(ins_cnt)[2:]))+bin(ins_cnt)[2:]
     ins_cnt += 1
 
-# main loop
-last_ins = ""
-ins = ""
+# main function
+def main():
+    out_lst=[]
+    last_ins = ""
+    ins = ""
 
-for i in range(len(inp_lines)):
-    line = inp_lines[i]
-    if ':' in line:
-        line = ''.join(line.split(':')[1:]).strip().split()
-    else:
-        line = inp_lines[i].strip().split()
-    if not line:
-        continue
-    if line[0] == 'var':
-        continue
-    if line[0] not in operations:
-        exit(f"Error on line {i+1}: Invalid instruction name {line[0]}")
-    ins = line[0]
-    args = line[1:]
-    line_no = i
+    for i in range(len(inp_lines)):
+        line = inp_lines[i]
+        if ':' in line:
+            line = ''.join(line.split(':')[1:]).strip().split()
+        else:
+            line = inp_lines[i].strip().split()
+        if not line:
+            continue
+        if line[0] == 'var':
+            continue
+        if line[0] not in operations:
+            exit(f"Error on line {i+1}: Invalid instruction name {line[0]}")
+        ins = line[0]
+        args = line[1:]
+        line_no = i
 
-    # look for correct mov 
-    if ins=="mov":
-        if all(i in registers for i in args):
-            ins = "mov1"
+        # look for correct mov 
+        if ins=="mov":
+            if all(i in registers for i in args):
+                ins = "mov1"
 
-    out_str = ""
-    # add binary
-    if ins in reg3ins:
-        out_str += ins_typeA(ins, args, line_no)
-    elif ins in immins:
-        out_str += ins_typeB(ins, args, line_no)
-    elif ins in reg2ins:
-        out_str += ins_typeC(ins, args, line_no)
-    elif ins in memins:
-        out_str += ins_typeD(ins, args, line_no)
-    else:
-        out_str += ins_typeE(ins, args, line_no)
+        out_str = ""
+        # add binary
+        if ins in reg3ins:
+            out_str += ins_typeA(ins, args, line_no)
+        elif ins in immins:
+            out_str += ins_typeB(ins, args, line_no)
+        elif ins in reg2ins:
+            out_str += ins_typeC(ins, args, line_no)
+        elif ins in memins:
+            out_str += ins_typeD(ins, args, line_no)
+        else:
+            out_str += ins_typeE(ins, args, line_no)
 
-    out_lst += out_str + '\n'
-    
-# Handling errors h and i
-if ins!="hlt":
-    exit("Error: Missing hlt instruction or last instruction is not hlt")
+        out_lst += out_str + '\n'
+        
+    # Handling errors h and i
+    if ins!="hlt":
+        exit("Error: Missing hlt instruction or last instruction is not hlt")
 
-# Opening output file and writing data to it given if no errors
-file_write()
+    # Opening output file and writing data to it given if no errors
+    file_write(out_lst)
+
+if __name__=="__main__":
+    main()
 
 # ORIGINAL CODE 
 
