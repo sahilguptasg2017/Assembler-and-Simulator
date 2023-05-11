@@ -132,13 +132,22 @@ def ins_typeE(ins, args, line_no):
         ins_str+=labels[args[0]]
     return ins_str
 
-# Opening and reading input file
-inp_file=open(r"stdin.txt","r+")
-inp_lines=inp_file.readlines()
-inp_file.close()
+# Function to read input from input file
+def file_read():
+    inp_file=open(r"stdin.txt","r+")
+    inp_lines=inp_file.readlines()
+    inp_file.close()
+    return inp_lines
+
+# Function to write output to output file
+def file_write():
+    out_file=open(r"stdout.txt","w")
+    for line in out_lst:
+        out_file.write(line)
+    out_file.close()
 
 # check if all vars are in front
-
+inp_lines=file_read()                  # Opening and reading input file
 for i in range(len(inp_lines)):
     wrds = inp_lines[i].strip().split()
     if not wrds:
@@ -223,6 +232,13 @@ for i in range(len(inp_lines)):
         out_str += ins_typeE(ins, args, line_no)
 
     out_lst += out_str + '\n'
+    
+# Handling errors h and i
+if ins!="hlt":
+    exit("Error: Missing hlt instruction or last instruction is not hlt")
+
+# Opening output file and writing data to it given if no errors
+file_write()
 
 # ORIGINAL CODE 
 
@@ -442,12 +458,3 @@ for i in range(len(inp_lines)):
 
 '''
 
-# Handling errors h and i
-if ins!="hlt":
-    exit("ERROR: Missing hlt instruction or last instruction is not hlt")
-
-# Opening output file and writing data to it given if no errors
-out_file=open(r"stdout.txt","w")
-for line in out_lst:
-    out_file.write(line)
-out_file.close()
