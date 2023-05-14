@@ -206,8 +206,6 @@ for i in varIndices:
     memIndex += 1
 
 
-line_count = 0
-
 # make labels dict
 
 ins_cnt = 0
