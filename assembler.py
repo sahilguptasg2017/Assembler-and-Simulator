@@ -34,7 +34,6 @@ registers={'R0':'000',
 var_count = 0
 instr_count = 0
 
-hasVar = [True]
 varIndices = []
 var_dict={}
 labels = {}
@@ -167,24 +166,33 @@ def file_write(out_lst):
     out_file.close()
 
 # check if all vars are in front
-inp_lines=file_read()                  # Opening and reading input file
-for i in range(len(inp_lines)):
-    wrds = inp_lines[i].strip().split()
-    if not wrds:
-        continue
-    if wrds[0] == 'var':
-        if not hasVar[-1]:
-            exit(f"Error on line {i+1}: variable name declared after instructions.")
-        if len(wrds) != 2:
-            exit(f"Error on line {i+1}: incorrect number of arguments in var command.")
-        var_count += 1
-        varIndices.append(i)
-    else:
-        instr_count += 1
-    hasVar.append(wrds[0] == 'var')
+inp_lines = file_read()
 
-if(instr_count > 127):
-    exit(f"Instruction count greater than 127. ")
+def var_and_ins_counts():
+    inp_lines=file_read()                  # Opening and reading input file
+    vc = 0
+    ic = 0
+    hasVar = [True]
+    for i in range(len(inp_lines)):
+        wrds = inp_lines[i].strip().split()
+        if not wrds:
+            continue
+        if wrds[0] == 'var':
+            if not hasVar[-1]:
+                exit(f"Error on line {i+1}: variable name declared after instructions.")
+            if len(wrds) != 2:
+                exit(f"Error on line {i+1}: incorrect number of arguments in var command.")
+            vc += 1
+            varIndices.append(i)
+        else:
+            ic += 1
+        hasVar.append(wrds[0] == 'var')
+    if(ic > 127):
+        exit(f"Instruction count greater than 127. ")
+    return (vc, ic)
+
+var_count, instr_count = var_and_ins_counts()
+
 memIndex = instr_count
 
 
