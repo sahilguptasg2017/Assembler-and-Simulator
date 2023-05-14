@@ -57,6 +57,26 @@ def ins_typeA(ins, args, line_no):
         exit(f"Error on line {line_no+1}: Incorrect number of argumets in type A instruction") 
     if not all([i in registers for i in args]):
         exit(f"Error on line {line_no+1}: Incorrect register name in type A instruction \"{ins}\"")
+
+    if ins=='add':
+        if "FLAGS" in args:
+            exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+        out_str=operations['add']
+        out_str+='0'*2
+        out_str+=registers[args[0]]
+        out_str+=registers[args[1]]
+        out_str+=registers[args[2]]
+        return out_str
+    elif ins=='sub':
+        if "FLAGS" in args:
+            exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+        out_str=operations['sub']
+        out_str+='0'*2
+        out_str+=registers[args[0]]
+        out_str+=registers[args[1]]
+        out_str+=registers[args[2]]
+        return out_str
+
     if "FLAGS" in args:
         exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
     ins_str = operations[ins] + "00"
