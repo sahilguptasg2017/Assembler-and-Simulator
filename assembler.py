@@ -162,7 +162,8 @@ for i in range(len(inp_lines)):
     else:
         instr_count += 1
     hasVar.append(wrds[0] == 'var')
-
+if(instr_count>127):
+    exit(f"Instruction count greater than 127. ")
 memIndex = instr_count
 
 # make var dict
