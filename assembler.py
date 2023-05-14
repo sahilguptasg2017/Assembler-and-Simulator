@@ -1,5 +1,5 @@
-# Dictionary for instruction set of operations in binary
-operations={"add":'00000',
+# Dictionary for instruction set of opCodeOf in binary
+opCodeOf={"add":'00000',
             'sub':'00001',
             'mov':'00010',
             'mov1':'00011',
@@ -60,7 +60,7 @@ def ins_typeA(ins, args, line_no):
     if ins=='add':
         if "FLAGS" in args:
             exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
-        out_str=operations['add']
+        out_str=opCodeOf['add']
         out_str+='0'*2
         out_str+=registers[args[0]]
         out_str+=registers[args[1]]
@@ -69,7 +69,7 @@ def ins_typeA(ins, args, line_no):
     elif ins=='sub':
         if "FLAGS" in args:
             exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
-        out_str=operations['sub']
+        out_str=opCodeOf['sub']
         out_str+='0'*2
         out_str+=registers[args[0]]
         out_str+=registers[args[1]]
@@ -78,7 +78,7 @@ def ins_typeA(ins, args, line_no):
 
     if "FLAGS" in args:
         exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
-    ins_str = operations[ins] + "00"
+    ins_str = opCodeOf[ins] + "00"
     ins_str += ''.join(registers[i] for i in args)
     return ins_str
 
@@ -89,7 +89,7 @@ def ins_typeB(ins, args, line_no):
         exit(f"Error on line {line_no+1}: Incorrect register name in type B instruction \"{ins}\"")
     if "FLAGS" in args:
         exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
-    ins_str=operations[ins]+'0'
+    ins_str=opCodeOf[ins]+'0'
     ins_str+=registers[args[0]]
 
     if args[1][0] != '$':
@@ -115,7 +115,7 @@ def ins_typeC(ins, args, line_no):
         exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
     if args[0] == 'FLAGS':
         exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
-    ins_str = operations[ins] + "00000"
+    ins_str = opCodeOf[ins] + "00000"
     ins_str += ''.join(registers[i] for i in args)
     return ins_str
 
@@ -124,7 +124,7 @@ def ins_typeD(ins, args, line_no):
         exit(f"Error on line {line_no+1}: Incorrect number of argumets in type D instruction") 
     if args[0] not in registers:
         exit(f"Error on line {line_no+1}: Incorrect register name in type D instruction \"{ins}\"")
-    ins_str = operations[ins] + '0'
+    ins_str = opCodeOf[ins] + '0'
     ins_str+=registers[args[0]]
     
     if(isvalid(args[1])):
@@ -139,10 +139,10 @@ def ins_typeD(ins, args, line_no):
 
 def ins_typeE(ins, args, line_no):
     if ins == 'hlt':
-        return operations['hlt'] + '0'*11
+        return opCodeOf['hlt'] + '0'*11
     if(len(args) != 1):
         exit(f"Error on line {line_no+1}: Incorrect number of argumets in type E instruction") 
-    ins_str = operations[ins] + '0'*4
+    ins_str = opCodeOf[ins] + '0'*4
     if isvalid(args[0]):
         ins_str += '0'*(7-len(args[0])) + args[0]
     else:
@@ -237,7 +237,7 @@ def main():
             continue
         if line[0] == 'var':
             continue
-        if line[0] not in operations:
+        if line[0] not in opCodeOf:
             exit(f"Error on line {i+1}: Invalid instruction name {line[0]}")
         ins = line[0]
         args = line[1:]
@@ -298,7 +298,7 @@ for i in range(len(inp_lines)):
     out_str=""
     if instruction[0]!='var': 
             # error check of variable  
-            if(instruction[0] not in operations.keys()):
+            if(instruction[0] not in opCodeOf.keys()):
                 out_str=("Incorrect instruction name in line " + str(line_count))
                 out_lst.append(f'{out_str}\n')
                 continue
@@ -312,7 +312,7 @@ for i in range(len(inp_lines)):
                     continue
 
                 if '$' in instruction[2]:
-                    out_str+=operations['mov']
+                    out_str+=opCodeOf['mov']
                     out_str+='0'
                     out_str+=registers[instruction[1]]
                     #this is only possible if value <= 127..
@@ -320,7 +320,7 @@ for i in range(len(inp_lines)):
                     out_str+=bin(int(instruction[2][1:]))[2:]    
                     out_lst.append(f'{out_str}\n')
                 else:
-                    out_str+=operations['mov1']
+                    out_str+=opCodeOf['mov1']
                     out_str+='0'*5
                     out_str+=registers[instruction[1]]
                     out_str+=registers[instruction[2]]
@@ -331,14 +331,14 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['mul']
+                out_str+=opCodeOf['mul']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_str+=registers[instruction[3]]
                 out_lst.append(f'{out_str}\n')
             elif instruction[0]=='st':
-                out_str+=operations['st']    
+                out_str+=opCodeOf['st']    
                 out_str+='0'
                 out_str+=registers[instruction[1]]
                 # error check of variable
@@ -349,7 +349,7 @@ for i in range(len(inp_lines)):
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                 out_lst.append(f'{out_str}\n')
             elif instruction[0]=='hlt':
-                out_str+=operations['hlt']
+                out_str+=opCodeOf['hlt']
                 out_str+=11*'0'
                 out_lst.append(f'{out_str}\n')
                 break
@@ -358,7 +358,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['add']
+                out_str+=opCodeOf['add']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
@@ -369,7 +369,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['sub']
+                out_str+=opCodeOf['sub']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
@@ -380,7 +380,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['ld']
+                out_str+=opCodeOf['ld']
                 out_str+='0'*1
                 out_str+=registers[instruction[1]]
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
@@ -390,7 +390,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['div']
+                out_str+=opCodeOf['div']
                 out_str+='0'*5
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
@@ -400,7 +400,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['rs']
+                out_str+=opCodeOf['rs']
                 out_str+='0'*1
                 out_str+=registers[instruction[1]]
                 out_str+=bin(int(instruction[2][1:]))[2:]
@@ -410,7 +410,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['ls']
+                out_str+=opCodeOf['ls']
                 out_str+='0'*1
                 out_str+=registers[instruction[1]]
                 out_str+=bin(int(instruction[2][1:]))[2:]    
@@ -420,7 +420,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['xor']
+                out_str+=opCodeOf['xor']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
@@ -431,7 +431,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['or']    
+                out_str+=opCodeOf['or']    
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
@@ -442,7 +442,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['and']
+                out_str+=opCodeOf['and']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
@@ -453,7 +453,7 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['not']
+                out_str+=opCodeOf['not']
                 out_str+='0'*5
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]  
@@ -463,28 +463,28 @@ for i in range(len(inp_lines)):
                     out_str=("Incorrect Register name in line " + str(line_count))
                     out_lst.append(f'{out_str}\n')
                     continue
-                out_str+=operations['cmp']
+                out_str+=opCodeOf['cmp']
                 out_str+='0'*5
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_lst.append(f'{out_str}\n')
             elif instruction[0]=='jmp':
-                out_str+=operations['cmp']
+                out_str+=opCodeOf['cmp']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                 out_lst.append(f'{out_str}\n')
             elif instruction[0]=='jlt':
-                out_str+=operations['jlt']
+                out_str+=opCodeOf['jlt']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                 out_lst.append(f'{out_str}\n')
             elif instruction[0]=='jgt':
-                out_str+=operations['jgt']
+                out_str+=opCodeOf['jgt']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                 out_lst.append(f'{out_str}\n')        
             elif instruction[0]=='je':
-                out_str+=operations['je']
+                out_str+=opCodeOf['je']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
                 out_lst.append(f'{out_str}\n')
