@@ -53,13 +53,13 @@ def isvalid(mem):
 # opcode to binary functions
 def ins_typeA(ins, args, line_no):
     if(len(args) != 3):
-        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type A instruction") 
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type A instruction" 
     if not all([i in registers for i in args]):
-        exit(f"Error on line {line_no+1}: Incorrect register name in type A instruction \"{ins}\"")
+        return f"Error on line {line_no+1}: Incorrect register name in type A instruction \"{ins}\""
 
     if ins=='add':
         if "FLAGS" in args:
-            exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+            return f"Error on line {line_no+1}: Illegal use of FLAGS"
         out_str=opCodeOf['add']
         out_str+='0'*2
         out_str+=registers[args[0]]
@@ -68,7 +68,7 @@ def ins_typeA(ins, args, line_no):
         return out_str
     elif ins=='sub':
         if "FLAGS" in args:
-            exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+            return f"Error on line {line_no+1}: Illegal use of FLAGS"
         out_str=opCodeOf['sub']
         out_str+='0'*2
         out_str+=registers[args[0]]
@@ -77,30 +77,30 @@ def ins_typeA(ins, args, line_no):
         return out_str
 
     if "FLAGS" in args:
-        exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+        return f"Error on line {line_no+1}: Illegal use of FLAGS"
     ins_str = opCodeOf[ins] + "00"
     ins_str += ''.join(registers[i] for i in args)
     return ins_str
 
 def ins_typeB(ins, args, line_no):
     if(len(args) != 2):
-        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type B instruction") 
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type B instruction"
     if args[0] not in registers:
-        exit(f"Error on line {line_no+1}: Incorrect register name in type B instruction \"{ins}\"")
+        return f"Error on line {line_no+1}: Incorrect register name in type B instruction \"{ins}\""
     if "FLAGS" in args:
-        exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+        return f"Error on line {line_no+1}: Illegal use of FLAGS"
     ins_str=opCodeOf[ins]+'0'
     ins_str+=registers[args[0]]
 
     if args[1][0] != '$':
-        exit(f"Error on line {line_no+1}: Incorrect format for Immediate value.")
+        return f"Error on line {line_no+1}: Incorrect format for Immediate value."
     for i in args[1][1:]:
         if i not in '0123456789':
-            exit(f"Error on line {line_no+1}: Incorrect format for Immediate value.")
+            return f"Error on line {line_no+1}: Incorrect format for Immediate value."
 
     nm = bin(int(args[1][1:]))[2:]
     if len(nm) > 7:
-        exit(f"Error on line {line_no+1}: Immediate value larger than 7 bits.")
+        return f"Error on line {line_no+1}: Immediate value larger than 7 bits."
 
     ins_str+= '0'*(7-len(nm))
     ins_str+= nm
@@ -108,22 +108,22 @@ def ins_typeB(ins, args, line_no):
 
 def ins_typeC(ins, args, line_no):
     if(len(args) != 2):
-        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type A instruction") 
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type A instruction"
     if not all([i in registers for i in args]):
-        exit(f"Error on line {line_no+1}: Incorrect register name in type A instruction \"{ins}\"")
+        return f"Error on line {line_no+1}: Incorrect register name in type A instruction \"{ins}\""
     if "FLAGS" in args and ins != "mov1":
-        exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+        return f"Error on line {line_no+1}: Illegal use of FLAGS"
     if args[0] == 'FLAGS':
-        exit(f"Error on line {line_no+1}: Illegal use of FLAGS")
+        return f"Error on line {line_no+1}: Illegal use of FLAGS"
     ins_str = opCodeOf[ins] + "00000"
     ins_str += ''.join(registers[i] for i in args)
     return ins_str
 
 def ins_typeD(ins, args, line_no):
     if(len(args) != 2):
-        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type D instruction") 
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type D instruction"
     if args[0] not in registers:
-        exit(f"Error on line {line_no+1}: Incorrect register name in type D instruction \"{ins}\"")
+        return f"Error on line {line_no+1}: Incorrect register name in type D instruction \"{ins}\""
     ins_str = opCodeOf[ins] + '0'
     ins_str+=registers[args[0]]
     
@@ -131,7 +131,7 @@ def ins_typeD(ins, args, line_no):
         ins_str += '0'*(7-len(args[1])) + args[1]
     else:
         if args[1] not in var_dict:
-            exit(f"Error on line {line_no+1}: Invalid variable name \"{args[1]}\"") 
+            return f"Error on line {line_no+1}: Invalid variable name \"{args[1]}\""
         else:
             ins_str+='0'*(7-len(bin(var_dict[args[1]])[2:]))+bin(var_dict[args[1]])[2:]
 
@@ -141,13 +141,13 @@ def ins_typeE(ins, args, line_no):
     if ins == 'hlt':
         return opCodeOf['hlt'] + '0'*11
     if(len(args) != 1):
-        exit(f"Error on line {line_no+1}: Incorrect number of argumets in type E instruction") 
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type E instruction\n"
     ins_str = opCodeOf[ins] + '0'*4
     if isvalid(args[0]):
         ins_str += '0'*(7-len(args[0])) + args[0]
     else:
         if args[0] not in labels:
-            exit(f"Error on line {line_no+1}: Invalid label name \"{args[0]}\"") 
+            return f"Error on line {line_no+1}: Invalid label name \"{args[0]}\"\n"
         ins_str+=labels[args[0]]
     return ins_str
 
@@ -168,6 +168,8 @@ def file_write(out_lst):
 # check if all vars are in front
 inp_lines = file_read()
 
+al_lst = []
+
 def var_and_ins_counts():
     inp_lines=file_read()                  # Opening and reading input file
     vc = 0
@@ -179,16 +181,16 @@ def var_and_ins_counts():
             continue
         if wrds[0] == 'var':
             if not hasVar[-1]:
-                exit(f"Error on line {i+1}: variable name declared after instructions.")
+                al_lst.append(f"Error on line {i+1}: variable name declared after instructions.\n")
             if len(wrds) != 2:
-                exit(f"Error on line {i+1}: incorrect number of arguments in var command.")
+                al_lst.append(f"Error on line {i+1}: incorrect number of arguments in var command.\n")
             vc += 1
             varIndices.append(i)
         else:
             ic += 1
         hasVar.append(wrds[0] == 'var')
     if(ic > 127):
-        exit(f"Instruction count greater than 127. ")
+        al_lst.append(f"Instruction count greater than 127.\n")
     return (vc, ic)
 
 var_count, instr_count = var_and_ins_counts()
@@ -201,7 +203,7 @@ memIndex = instr_count
 for i in varIndices:
     nm = inp_lines[i].strip().split()[1]
     if nm in var_dict:
-        exit(f"Error on line {i+1}: variable \"{nm}\" has already been declared.")
+        al_lst.append(f"Error on line {i+1}: variable \"{nm}\" has already been declared.\n")
     var_dict[nm] = memIndex
     memIndex += 1
 
@@ -217,13 +219,13 @@ for i in range(len(inp_lines)):
         continue
     if line[0][-1] == ':':
         if line[0][:-1] in labels:
-            exit(f"Error on line {i+1}: Label already exists")
+            al_lst.append(f"Error on line {i+1}: Label already exists\n")
         labels[line[0][:-1]] = '0'*(7-len(bin(ins_cnt)[2:]))+bin(ins_cnt)[2:]
     ins_cnt += 1
 
 # main function
 def main():
-    out_lst=[]
+    out_lst=al_lst
     last_ins = ""
     ins = ""
 
@@ -238,7 +240,7 @@ def main():
         if line[0] == 'var':
             continue
         if line[0] not in opCodeOf:
-            exit(f"Error on line {i+1}: Invalid instruction name {line[0]}")
+            out_lst.append(f"Error on line {i+1}: Invalid instruction name {line[0]}\n")
         ins = line[0]
         args = line[1:]
         line_no = i
@@ -261,14 +263,16 @@ def main():
         else:
             out_str += ins_typeE(ins, args, line_no)
 
-        out_lst += out_str + '\n'
+        out_lst.append(out_str + '\n')
         
     # Handling errors h and i
     if ins!="hlt":
-        exit("Error: Missing hlt instruction or last instruction is not hlt")
+         out_lst.append(f"Error: Missing hlt instruction or last instruction is not hlt\n")
 
-    # Opening output file and writing data to it given if no errors
-    file_write(out_lst)
+    if any(["Error" in i for i in out_lst]):
+        file_write([i for i in out_lst if "Error" in i])
+    else:
+        file_write(out_lst)
 
 if __name__=="__main__":
     main()
