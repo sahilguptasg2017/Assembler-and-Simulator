@@ -1,6 +1,0 @@
-Error on line 8: variable name declared after instructions.
-Error on line 5: Invalid variable name "myvar"
-Error on line 15: Invalid label name "mylabel"
-
-Error on line 16: Invalid label name "mylabel"
-

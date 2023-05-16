@@ -142,13 +142,13 @@ def ins_typeE(ins, args, line_no):
     if ins == 'hlt':
         return opCodeOf['hlt'] + '0'*11
     if(len(args) != 1):
-        return f"Error on line {line_no+1}: Incorrect number of argumets in type E instruction\n"
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type E instruction"
     ins_str = opCodeOf[ins] + '0'*4
     if isvalid(args[0]):
         ins_str += '0'*(7-len(args[0])) + args[0]
     else:
         if args[0] not in labels:
-            return f"Error on line {line_no+1}: Invalid label name \"{args[0]}\"\n"
+            return f"Error on line {line_no+1}: Invalid label name \"{args[0]}\""
         ins_str+=labels[args[0]]
     return ins_str
 
@@ -159,10 +159,8 @@ def file_read():
 
 # Function to write output to output file
 def file_write(out_lst):
-    out_file=open(r"stdout.txt","w")
     for line in out_lst:
-        out_file.write(line)
-    out_file.close()
+        print(line)
 
 # check if all vars are in front
 inp_lines = file_read()
@@ -170,7 +168,7 @@ inp_lines = file_read()
 al_lst = []
 
 def var_and_ins_counts():
-    inp_lines=file_read()                  # Opening and reading input file
+    #inp_lines=file_read()                  # Opening and reading input file
     vc = 0
     ic = 0
     hasVar = [True]
@@ -180,16 +178,16 @@ def var_and_ins_counts():
             continue
         if wrds[0] == 'var':
             if not hasVar[-1]:
-                al_lst.append(f"Error on line {i+1}: variable name declared after instructions.\n")
+                al_lst.append(f"Error on line {i+1}: variable name declared after instructions.")
             if len(wrds) != 2:
-                al_lst.append(f"Error on line {i+1}: incorrect number of arguments in var command.\n")
+                al_lst.append(f"Error on line {i+1}: incorrect number of arguments in var command.")
             vc += 1
             varIndices.append(i)
         else:
             ic += 1
         hasVar.append(wrds[0] == 'var')
     if(ic > 127):
-        al_lst.append(f"Instruction count greater than 127.\n")
+        al_lst.append(f"Instruction count greater than 127.")
     return (vc, ic)
 
 var_count, instr_count = var_and_ins_counts()
@@ -202,7 +200,7 @@ memIndex = instr_count
 for i in varIndices:
     nm = inp_lines[i].strip().split()[1]
     if nm in var_dict:
-        al_lst.append(f"Error on line {i+1}: variable \"{nm}\" has already been declared.\n")
+        al_lst.append(f"Error on line {i+1}: variable \"{nm}\" has already been declared.")
     var_dict[nm] = memIndex
     memIndex += 1
 
@@ -218,7 +216,7 @@ for i in range(len(inp_lines)):
         continue
     if line[0][-1] == ':':
         if line[0][:-1] in labels:
-            al_lst.append(f"Error on line {i+1}: Label already exists\n")
+            al_lst.append(f"Error on line {i+1}: Label already exists")
         labels[line[0][:-1]] = '0'*(7-len(bin(ins_cnt)[2:]))+bin(ins_cnt)[2:]
     ins_cnt += 1
 
@@ -239,7 +237,7 @@ def main():
         if line[0] == 'var':
             continue
         if line[0] not in opCodeOf:
-            out_lst.append(f"Error on line {i+1}: Invalid instruction name {line[0]}\n")
+            out_lst.append(f"Error on line {i+1}: Invalid instruction name {line[0]}")
         ins = line[0]
         args = line[1:]
         line_no = i
@@ -262,11 +260,11 @@ def main():
         else:
             out_str += ins_typeE(ins, args, line_no)
 
-        out_lst.append(out_str + '\n')
+        out_lst.append(out_str + '')
         
     # Handling errors h and i
     if ins!="hlt":
-         out_lst.append(f"Error: Missing hlt instruction or last instruction is not hlt\n")
+         out_lst.append(f"Error: Missing hlt instruction or last instruction is not hlt")
 
     if any(["Error" in i for i in out_lst]):
         file_write([i for i in out_lst if "Error" in i])
@@ -303,7 +301,7 @@ for i in range(len(inp_lines)):
             # error check of variable  
             if(instruction[0] not in opCodeOf.keys()):
                 out_str=("Incorrect instruction name in line " + str(line_count))
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
                 continue
 
 
@@ -311,7 +309,7 @@ for i in range(len(inp_lines)):
                 # error of register
                 if(instruction[1] not in registers.keys()):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
 
                 if '$' in instruction[2]:
@@ -321,25 +319,25 @@ for i in range(len(inp_lines)):
                     #this is only possible if value <= 127..
                     out_str+='0'*(7-len(bin(int(instruction[2][1:]))[2:]))
                     out_str+=bin(int(instruction[2][1:]))[2:]    
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                 else:
                     out_str+=opCodeOf['mov1']
                     out_str+='0'*5
                     out_str+=registers[instruction[1]]
                     out_str+=registers[instruction[2]]
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
             elif instruction[0]=='mul':
                 # error check of register
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['mul']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='st':
                 out_str+=opCodeOf['st']    
                 out_str+='0'
@@ -347,150 +345,150 @@ for i in range(len(inp_lines)):
                 # error check of variable
                 if(instruction[2] not in var_dict.keys()):
                     out_str=("Incorrect variable name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue 
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='hlt':
                 out_str+=opCodeOf['hlt']
                 out_str+=11*'0'
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
                 break
             elif instruction[0]=='add':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['add']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='sub':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['sub']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='ld':
                 if(instruction[1] not in registers.keys()):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['ld']
                 out_str+='0'*1
                 out_str+=registers[instruction[1]]
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='div':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['div']
                 out_str+='0'*5
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='rs':
                 if(instruction[1] not in registers.keys()):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['rs']
                 out_str+='0'*1
                 out_str+=registers[instruction[1]]
                 out_str+=bin(int(instruction[2][1:]))[2:]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='ls':
                 if(instruction[1] not in registers.keys()):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['ls']
                 out_str+='0'*1
                 out_str+=registers[instruction[1]]
                 out_str+=bin(int(instruction[2][1:]))[2:]    
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='xor':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['xor']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='or':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['or']    
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='and':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['and']
                 out_str+='0'*2
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
                 out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='not':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['not']
                 out_str+='0'*5
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]  
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='cmp':
                 if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
                     out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}\n')
+                    out_lst.append(f'{out_str}')
                     continue
                 out_str+=opCodeOf['cmp']
                 out_str+='0'*5
                 out_str+=registers[instruction[1]]
                 out_str+=registers[instruction[2]]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='jmp':
                 out_str+=opCodeOf['cmp']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='jlt':
                 out_str+=opCodeOf['jlt']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
             elif instruction[0]=='jgt':
                 out_str+=opCodeOf['jgt']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}\n')        
+                out_lst.append(f'{out_str}')        
             elif instruction[0]=='je':
                 out_str+=opCodeOf['je']
                 out_str+='0'*4
                 out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}\n')
+                out_lst.append(f'{out_str}')
 
 '''
 
