@@ -1,3 +1,4 @@
+import sys
 # Dictionary for instruction set of opCodeOf in binary
 opCodeOf={"add":'00000',
             'sub':'00001',
@@ -153,9 +154,7 @@ def ins_typeE(ins, args, line_no):
 
 # Function to read input from input file
 def file_read():
-    inp_file=open(r"stdin.txt","r+")
-    inp_lines=inp_file.readlines()
-    inp_file.close()
+    inp_lines=sys.stdin.readlines()
     return inp_lines
 
 # Function to write output to output file
