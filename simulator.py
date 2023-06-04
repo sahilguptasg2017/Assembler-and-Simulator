@@ -103,7 +103,7 @@ def appending_output(out_lst):
     string="0"(7-len(bin(program_counter)[2:]))+bin(program_counter)[2:]+" "*8
     for i in registers_value:
         string+=(16-len(bin(registers_value[i][2:])))*0+bin(registers_value[i])[2:]+" " 
-    out_lst.appemd(string)        
+    out_lst.append(string)        
 
 def hlt(out_lst):
     global program_counter
@@ -119,6 +119,8 @@ def binarytodecimal(line):
     return ans    
 
 def jmp(out_lst,line):
+    global program_counter
+    
     program_counter=binarytodecimal(line[9:])
     
 
