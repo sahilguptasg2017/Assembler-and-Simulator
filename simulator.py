@@ -82,9 +82,6 @@ operatorOf = {
     "xor": operator.xor
 }
 
-#print(operatorOf["xor"](4, 4))
-
-
 def validImmediate(reg):
     return 0 <= reg < 128
 
