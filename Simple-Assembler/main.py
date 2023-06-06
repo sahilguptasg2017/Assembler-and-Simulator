@@ -19,7 +19,11 @@ opCodeOf={"add":'00000',
             'jlt':'11100',
             'jgt':'11101',
             'je':'11111',
-            'hlt':'11010'}
+            'hlt':'11010',
+            'addf':'10000',
+            'subf':'10001',   
+            'movf':'10010'
+            }
 
 # Dictionary for register addresses in binary
 registers={'R0':'000',
@@ -40,11 +44,11 @@ var_dict={}
 labels = {}
 
 reg3ins = ["add", "sub", "mul", "xor", "or", "and"] # type A
-immins = ["mov", "rs", "ls"] # type B
+immins = ["mov", "rs", "ls","movf"] # type B
 reg2ins = ["mov1", "div", "not", "cmp"] # type C
 memins = ["ld", "st"] # type D
 jmpins = ["jmp", "jlt", "jgt", "je", "hlt"] # type E
-
+fmpins=["addf","subf","movf"]#type F
 # check if valid memory address
 def isvalid(mem):
     if not all([i in "01" for i in mem]):
@@ -76,12 +80,45 @@ def ins_typeA(ins, args, line_no):
         out_str+=registers[args[1]]
         out_str+=registers[args[2]]
         return out_str
+    elif ins=='addf':    
+        out_str=opCodeOf['addf']
+        out_str+='0'*2
+        out_str+=registers[args[0]]
+        out_str+=registers[args[1]]
+        out_str+=registers[args[2]]
+        return out_str
+    elif ins=='subf':
+        if "FLAGS" in args:
+            return f"Error on line {line_no+1}: Illegal use of FLAGS"
+        out_str=opCodeOf['subf']
+        out_str+='0'*2
+        out_str+=registers[args[0]]
+        out_str+=registers[args[1]]
+        out_str+=registers[args[2]]
+        return out_str
 
     if "FLAGS" in args:
         return f"Error on line {line_no+1}: Illegal use of FLAGS"
     ins_str = opCodeOf[ins] + "00"
     ins_str += ''.join(registers[i] for i in args)
     return ins_str
+
+def movf(ins,args,line_no):
+    if(len(args) != 2):
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type B instruction"
+    if args[0] not in registers:
+        return f"Error on line {line_no+1}: Incorrect register name in type B instruction \"{ins}\""
+    if "FLAGS" in args:
+        return f"Error on line {line_no+1}: Illegal use of FLAGS"
+    ins_str=opCodeOf['movf']
+    ins_str+=registers[args[0]]
+
+    if args[1][0] != '$':
+        return f"Error on line {line_no+1}: Incorrect format for Immediate value."
+
+    
+
+    
 
 def ins_typeB(ins, args, line_no):
     if(len(args) != 2):
@@ -151,6 +188,18 @@ def ins_typeE(ins, args, line_no):
             return f"Error on line {line_no+1}: Invalid label name \"{args[0]}\""
         ins_str+=labels[args[0]]
     return ins_str
+
+'''def ins_typeF(ins,args,line_no):
+    if(len(args) != 3):
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type F instruction" 
+    if not all([i in registers for i in args]):
+        return f"Error on line {line_no+1}: Incorrect register name in type F instruction \"{ins}\""    
+
+def inst_movf(ins,args,line_no):
+    if(len(args)!=2):
+        return f"Error on line {line_no+1}: Incorrect number of argumets in type F instruction" 
+'''
+
 
 # Function to read input from input file
 def file_read():
@@ -273,222 +322,3 @@ def main():
 
 if __name__=="__main__":
     main()
-
-# ORIGINAL CODE 
-
-'''
-for i in range(len(inp_lines)):
-    line_count+=1
-    # Storing the instruction in list
-    line = inp_lines[i].strip()
-    if not line:
-        continue
-    #adjusting for labels by dividing it on ":" symbol.
-    if ":" in line:
-        line=line[line.index(":")+1:]           
-    words=line.split(" ")
-    k=0
-    while k<len(words):
-        words[k]=words[k].strip()
-        k+=1
-    instruction=[]
-    for t in words:   
-        if t!='':
-            instruction.append(t)
-    # Reading, interpreting instruction and writing corresponding binary to stdout.txt
-    out_str=""
-    if instruction[0]!='var': 
-            # error check of variable  
-            if(instruction[0] not in opCodeOf.keys()):
-                out_str=("Incorrect instruction name in line " + str(line_count))
-                out_lst.append(f'{out_str}')
-                continue
-
-
-            if instruction[0]=='mov':
-                # error of register
-                if(instruction[1] not in registers.keys()):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-
-                if '$' in instruction[2]:
-                    out_str+=opCodeOf['mov']
-                    out_str+='0'
-                    out_str+=registers[instruction[1]]
-                    #this is only possible if value <= 127..
-                    out_str+='0'*(7-len(bin(int(instruction[2][1:]))[2:]))
-                    out_str+=bin(int(instruction[2][1:]))[2:]    
-                    out_lst.append(f'{out_str}')
-                else:
-                    out_str+=opCodeOf['mov1']
-                    out_str+='0'*5
-                    out_str+=registers[instruction[1]]
-                    out_str+=registers[instruction[2]]
-                    out_lst.append(f'{out_str}')
-            elif instruction[0]=='mul':
-                # error check of register
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['mul']
-                out_str+='0'*2
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='st':
-                out_str+=opCodeOf['st']    
-                out_str+='0'
-                out_str+=registers[instruction[1]]
-                # error check of variable
-                if(instruction[2] not in var_dict.keys()):
-                    out_str=("Incorrect variable name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue 
-                out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='hlt':
-                out_str+=opCodeOf['hlt']
-                out_str+=11*'0'
-                out_lst.append(f'{out_str}')
-                break
-            elif instruction[0]=='add':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['add']
-                out_str+='0'*2
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='sub':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['sub']
-                out_str+='0'*2
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='ld':
-                if(instruction[1] not in registers.keys()):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['ld']
-                out_str+='0'*1
-                out_str+=registers[instruction[1]]
-                out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='div':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['div']
-                out_str+='0'*5
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='rs':
-                if(instruction[1] not in registers.keys()):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['rs']
-                out_str+='0'*1
-                out_str+=registers[instruction[1]]
-                out_str+=bin(int(instruction[2][1:]))[2:]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='ls':
-                if(instruction[1] not in registers.keys()):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['ls']
-                out_str+='0'*1
-                out_str+=registers[instruction[1]]
-                out_str+=bin(int(instruction[2][1:]))[2:]    
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='xor':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['xor']
-                out_str+='0'*2
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='or':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['or']    
-                out_str+='0'*2
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='and':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys() or instruction[3] not in registers.keys() ):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['and']
-                out_str+='0'*2
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_str+=registers[instruction[3]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='not':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['not']
-                out_str+='0'*5
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]  
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='cmp':
-                if(instruction[1] not in registers.keys() or instruction[2] not in registers.keys()):
-                    out_str=("Incorrect Register name in line " + str(line_count))
-                    out_lst.append(f'{out_str}')
-                    continue
-                out_str+=opCodeOf['cmp']
-                out_str+='0'*5
-                out_str+=registers[instruction[1]]
-                out_str+=registers[instruction[2]]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='jmp':
-                out_str+=opCodeOf['cmp']
-                out_str+='0'*4
-                out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='jlt':
-                out_str+=opCodeOf['jlt']
-                out_str+='0'*4
-                out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}')
-            elif instruction[0]=='jgt':
-                out_str+=opCodeOf['jgt']
-                out_str+='0'*4
-                out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}')        
-            elif instruction[0]=='je':
-                out_str+=opCodeOf['je']
-                out_str+='0'*4
-                out_str+='0'*(7-len(bin(var_dict[instruction[2]])[2:]))+bin(var_dict[instruction[2]])[2:]
-                out_lst.append(f'{out_str}')
-
-'''
-
