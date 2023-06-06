@@ -1,6 +1,7 @@
 import sys
 import operator
 
+
 def binToInt(s):
     exp = 1
     ans = 0
@@ -142,9 +143,9 @@ def typeC(ins, reg1, reg2):
 def typeD(ins, reg1, mem1):
     global registers
     if ins == 'ld':
-        registers[reg1] = memory[mem1]
+        registers[reg1] = memory[mem1] #performs load operation
     else:
-        memory[mem1] = registers[reg1]
+        memory[mem1] = registers[reg1] #performs store operation
     next()
 
 # MAIN
