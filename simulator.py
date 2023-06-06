@@ -23,7 +23,7 @@ def intToPC(n):
         s = chr(ord('0') + n % 2) + s
         n //= 2
     return s + ' ' * 8  # 8 spaces required by output for some reason
-
+memory_address =[]
 insCodeOf = {'00000': "add",
              '00001': 'sub',
              '00010': 'mov',
@@ -161,7 +161,7 @@ while executing:
     current = binary[PC]
     opc = current[:5]
     ins = insCodeOf[opc]
-
+    old_flag = registers[FLAGS]
     # type A
     if ins in reg3ins:
         r1 = binToInt(current[7:10])
@@ -228,6 +228,7 @@ while executing:
             registers[reg1] = memory[mem1]
         else:
             memory[mem1] = registers[reg1]
+        memory_address.append(registers[reg1])
         executeNextIns()
 
     # type E
@@ -247,11 +248,15 @@ while executing:
         else:
             executing = False
         executeNextIns()
-
+    if(registers[FLAGS] == old_flag):
+        registers[FLAGS] = 0
     dumpState(old)
 count = 0
 for x in binary:
     print(x)
+    count +=1
+for i in memory_address:
+    print(intToBin(i))
     count +=1
 for i in range(128-count):
     print("0"*16)     
