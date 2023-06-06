@@ -82,7 +82,7 @@ operatorOf = {
     "xor": operator.xor
 }
 
-print(operatorOf["xor"](4, 4))
+#print(operatorOf["xor"](4, 4))
 
 
 def validImmediate(reg):
@@ -153,7 +153,7 @@ def typeD(ins, reg1, mem1):
 # MAIN
 
 binary = getBinary()
-print(binary)
+#print(binary)
 
 for i in range(len(binary)):
     memory[i] = binToInt(binary[i])
@@ -251,3 +251,9 @@ while executing:
         next()
 
     dumpState(old)
+count = 0
+for x in binary:
+    print(x)
+    count +=1
+for i in range(128-count):
+    print("0"*16)     
