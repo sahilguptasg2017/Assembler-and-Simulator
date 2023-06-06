@@ -155,7 +155,7 @@ def movf(ins,args,line_no):
         return f"Error on line {line_no+1}: Incorrect format for Immediate value."
 
     if  float(args[1][1:])<0.125 or float(args[1][1:]) > 31.5:
-        return f"Error on line{line_no+1}: Incorrect range of immediate value"
+        return f"Error on line {line_no+1}: Incorrect range of Immediate value"
     ins_str+=float_to_binary(float(args[1][1:]))
 
     return ins_str
