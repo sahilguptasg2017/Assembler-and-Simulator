@@ -1,7 +1,6 @@
 import sys
 import operator
 
-
 def binToInt(s):
     exp = 1
     ans = 0
@@ -51,10 +50,10 @@ registers = [0] * 8
 memory = [0] * 128
 FLAGS = 7
 
-PC = 0
-executing = True
+PC = 0 # program counter
+executing = True # variable to determine when program should stop running
 
-def next():
+def executeNextIns():
     global PC
     PC += 1
 
@@ -74,6 +73,7 @@ reg2ins = ["mov1", "div", "not", "cmp"]  # type C
 memins = ["ld", "st"]  # type D
 jmpins = ["jmp", "jlt", "jgt", "je", "hlt"]  # type E
 
+# implementing operations using operator lib
 operatorOf = {
     "add": operator.add,
     "sub": operator.sub,
@@ -96,7 +96,7 @@ def typeA(ins, reg1, reg2, reg3):
     else:
         registers[FLAGS] &= 119  # 127 - 8
 
-    next()
+    executeNextIns()
 
 def typeB(ins, reg1, im1):
     global registers
@@ -108,7 +108,7 @@ def typeB(ins, reg1, im1):
         registers[reg1] <<= im1
         registers[reg1] %= 128
 
-    next()
+    executeNextIns()
 
 def typeC(ins, reg1, reg2):
     global registers
@@ -137,7 +137,7 @@ def typeC(ins, reg1, reg2):
             registers[FLAGS] &= 123
             registers[FLAGS] |= 2
             registers[FLAGS] &= 126
-    next()
+    executeNextIns()
 
 
 def typeD(ins, reg1, mem1):
@@ -146,7 +146,7 @@ def typeD(ins, reg1, mem1):
         registers[reg1] = memory[mem1] #performs load operation
     else:
         memory[mem1] = registers[reg1] #performs store operation
-    next()
+    executeNextIns()
 
 # MAIN
 
@@ -173,7 +173,7 @@ while executing:
             registers[FLAGS] |= 8  # forcefully set overflow flag
         else:
             registers[FLAGS] &= 119  # 127 - 8
-        next()
+        executeNextIns()
 
     # type B
     elif ins in immins:
@@ -187,7 +187,7 @@ while executing:
             registers[reg1] <<= im1
             registers[reg1] %= 128
 
-        next()
+        executeNextIns()
 
     # type C
     elif ins in reg2ins:
@@ -218,7 +218,7 @@ while executing:
                 registers[FLAGS] &= 123
                 registers[FLAGS] |= 2
                 registers[FLAGS] &= 126
-        next()
+        executeNextIns()
 
     # type D
     elif ins in memins:
@@ -228,7 +228,7 @@ while executing:
             registers[reg1] = memory[mem1]
         else:
             memory[mem1] = registers[reg1]
-        next()
+        executeNextIns()
 
     # type E
     else:
@@ -246,7 +246,7 @@ while executing:
                 PC = mem1
         else:
             executing = False
-        next()
+        executeNextIns()
 
     dumpState(old)
 count = 0
