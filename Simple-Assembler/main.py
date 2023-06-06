@@ -43,12 +43,12 @@ varIndices = []
 var_dict={}
 labels = {}
 
-reg3ins = ["add", "sub", "mul", "xor", "or", "and"] # type A
-immins = ["mov", "rs", "ls","movf"] # type B
+reg3ins = ["add", "sub", "mul", "xor", "or", "and","addf","subf"] # type A
+immins = ["mov", "rs", "ls"] # type B
 reg2ins = ["mov1", "div", "not", "cmp"] # type C
 memins = ["ld", "st"] # type D
 jmpins = ["jmp", "jlt", "jgt", "je", "hlt"] # type E
-fmpins=["addf","subf","movf"]#type F
+#fmpins=["addf","subf"]#type F
 # check if valid memory address
 def isvalid(mem):
     if not all([i in "01" for i in mem]):
@@ -103,6 +103,44 @@ def ins_typeA(ins, args, line_no):
     ins_str += ''.join(registers[i] for i in args)
     return ins_str
 
+def float_to_binary(floating_number):
+    if floating_number == 0.0:
+        return '0' * 8
+    
+    if floating_number == float('inf') or floating_number == float('-inf'):
+        return '1' + '1' * 7
+    
+    if floating_number != floating_number: 
+        return '1' + '0' * 7
+    
+    bits = []
+    
+    exponent = 0
+    if floating_number >= 1.0:
+        while floating_number >= 2.0:
+            floating_number /= 2.0
+            exponent += 1
+    elif floating_number < 1.0:
+        while floating_number < 1.0:
+            floating_number *= 2.0
+            exponent -= 1
+    
+    exponent_bits = format(exponent + 3, '03b') 
+    bits.extend(exponent_bits)
+
+    mantissa_bits = []
+    mantissa = floating_number - 1.0
+    for _ in range(5):
+        mantissa *= 2.0
+        bit = '1' if mantissa >= 1.0 else '0'
+        mantissa_bits.append(bit)
+        if mantissa >= 1.0:
+            mantissa -= 1.0
+    
+    bits.extend(mantissa_bits)
+    
+    return ''.join(bits)
+
 def movf(ins,args,line_no):
     if(len(args) != 2):
         return f"Error on line {line_no+1}: Incorrect number of argumets in type B instruction"
@@ -116,9 +154,14 @@ def movf(ins,args,line_no):
     if args[1][0] != '$':
         return f"Error on line {line_no+1}: Incorrect format for Immediate value."
 
-    
+    if  float(args[1][1:])<0.125 or float(args[1][1:]) > 31.5:
+        return f"Error on line{line_no+1}: Incorrect range of immediate value"
+    ins_str+=float_to_binary(float(args[1][1:]))
 
-    
+    return ins_str
+
+
+
 
 def ins_typeB(ins, args, line_no):
     if(len(args) != 2):
@@ -306,6 +349,8 @@ def main():
             out_str += ins_typeC(ins, args, line_no)
         elif ins in memins:
             out_str += ins_typeD(ins, args, line_no)
+        elif ins == 'movf':
+            out_str += movf(ins,args,line_no)    
         else:
             out_str += ins_typeE(ins, args, line_no)
 
