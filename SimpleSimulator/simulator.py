@@ -23,7 +23,7 @@ def intToPC(n):
         s = chr(ord('0') + n % 2) + s
         n //= 2
     return s + ' ' * 8  # 8 spaces required by output for some reason
-memory_address =[]
+
 insCodeOf = {'00000': "add",
              '00001': 'sub',
              '00010': 'mov',
@@ -50,10 +50,10 @@ registers = [0] * 8
 memory = [0] * 128
 FLAGS = 7
 
-PC = 0 # program counter
-executing = True # variable to determine when program should stop running
+PC = 0
+executing = True
 
-def executeNextIns():
+def next():
     global PC
     PC += 1
 
@@ -73,7 +73,6 @@ reg2ins = ["mov1", "div", "not", "cmp"]  # type C
 memins = ["ld", "st"]  # type D
 jmpins = ["jmp", "jlt", "jgt", "je", "hlt"]  # type E
 
-# implementing operations using operator lib
 operatorOf = {
     "add": operator.add,
     "sub": operator.sub,
@@ -83,71 +82,11 @@ operatorOf = {
     "xor": operator.xor
 }
 
+#print(operatorOf["xor"](4, 4))
+
+
 def validImmediate(reg):
     return 0 <= reg < 128
-
-def typeA(ins, reg1, reg2, reg3):
-    global registers
-
-    registers[reg1] = operatorOf[ins](registers[reg2], registers[reg3])
-    if not validImmediate(registers[reg1]):
-        registers[reg1] = 0
-        registers[FLAGS] |= 8  # forcefully set overflow flag
-    else:
-        registers[FLAGS] &= 119  # 127 - 8
-
-    executeNextIns()
-
-def typeB(ins, reg1, im1):
-    global registers
-    if ins == 'mov':
-        registers[reg1] = im1
-    elif ins == 'rs':
-        registers[reg1] >>= im1
-    else:
-        registers[reg1] <<= im1
-        registers[reg1] %= 128
-
-    executeNextIns()
-
-def typeC(ins, reg1, reg2):
-    global registers
-    if ins == 'mov1':
-        registers[reg1] = registers[reg2]
-    elif ins == 'div':
-        if registers[reg2] == 0:
-            registers[reg1] = 0
-            registers[FLAGS] |= 8
-        else:
-            registers[reg1] //= registers[reg2]
-            registers[FLAGS] &= 119
-    elif ins == 'not':
-        registers[reg1] = 127 - registers[reg2]
-    else:
-        # cmp
-        if registers[reg1] < registers[reg2]:
-            registers[FLAGS] |= 4
-            registers[FLAGS] &= 125  # 127 - 2
-            registers[FLAGS] &= 126  # 127 - 1
-        elif registers[reg1] == registers[reg2]:
-            registers[FLAGS] &= 123  # 127 - 4
-            registers[FLAGS] &= 125  # 127 - 2
-            registers[FLAGS] |= 1
-        else:
-            registers[FLAGS] &= 123
-            registers[FLAGS] |= 2
-            registers[FLAGS] &= 126
-    executeNextIns()
-
-
-def typeD(ins, reg1, mem1):
-    global registers
-    if ins == 'ld':
-        registers[reg1] = memory[mem1] #performs load operation
-    else:
-        memory[mem1] = registers[reg1] #performs store operation
-    executeNextIns()
-
 # MAIN
 
 binary = getBinary()
@@ -157,11 +96,14 @@ for i in range(len(binary)):
     memory[i] = binToInt(binary[i])
 
 while executing:
+    if PC >= len(binary):
+        break
+    flagsWasSet = False
     old = PC
     current = binary[PC]
     opc = current[:5]
     ins = insCodeOf[opc]
-    old_flag = registers[FLAGS]
+
     # type A
     if ins in reg3ins:
         r1 = binToInt(current[7:10])
@@ -170,10 +112,10 @@ while executing:
         registers[r1] = operatorOf[ins](registers[r2], registers[r3])
         if not validImmediate(registers[r1]):
             registers[r1] = 0
-            registers[FLAGS] |= 8  # forcefully set overflow flag
-        else:
-            registers[FLAGS] &= 119  # 127 - 8
-        executeNextIns()
+            # registers[FLAGS] |= 8  # forcefully set overflow flag
+            registers[FLAGS] |= 8  # REVIEW THIS
+            flagsWasSet = True
+        next()
 
     # type B
     elif ins in immins:
@@ -187,7 +129,7 @@ while executing:
             registers[reg1] <<= im1
             registers[reg1] %= 128
 
-        executeNextIns()
+        next()
 
     # type C
     elif ins in reg2ins:
@@ -198,14 +140,17 @@ while executing:
         elif ins == 'div':
             if registers[reg2] == 0:
                 registers[reg1] = 0
+                # registers[FLAGS] |= 8
                 registers[FLAGS] |= 8
+                # REVIEW THIS
+                flagsWasSet = True
             else:
                 registers[reg1] //= registers[reg2]
-                registers[FLAGS] &= 119
         elif ins == 'not':
             registers[reg1] = 127 - registers[reg2]
         else:
             # cmp
+            flagsWasSet = True
             if registers[reg1] < registers[reg2]:
                 registers[FLAGS] |= 4
                 registers[FLAGS] &= 125  # 127 - 2
@@ -218,7 +163,7 @@ while executing:
                 registers[FLAGS] &= 123
                 registers[FLAGS] |= 2
                 registers[FLAGS] &= 126
-        executeNextIns()
+        next()
 
     # type D
     elif ins in memins:
@@ -228,35 +173,30 @@ while executing:
             registers[reg1] = memory[mem1]
         else:
             memory[mem1] = registers[reg1]
-        memory_address.append(registers[reg1])
-        executeNextIns()
+        next()
 
     # type E
     else:
         mem1 = binToInt(current[9:])
         if ins == 'jmp':
-            PC = mem1
+            PC = mem1 - 1
         elif ins == 'jlt':
             if registers[FLAGS] & 4:
-                PC = mem1
+                PC = mem1 - 1
         elif ins == 'jgt':
             if registers[FLAGS] & 2:
-                PC = mem1
+                PC = mem1 - 1
         elif ins == 'je':
             if registers[FLAGS] & 1:
-                PC = mem1
+                PC = mem1 - 1
         else:
             executing = False
-        executeNextIns()
-    if(registers[FLAGS] == old_flag):
+        next()
+
+    if not flagsWasSet: 
         registers[FLAGS] = 0
+
     dumpState(old)
-count = 0
-for x in binary:
-    print(x)
-    count +=1
-for i in memory_address:
-    print(intToBin(i))
-    count +=1
-for i in range(128-count):
-    print("0"*16)     
+
+for i in range(128):
+    print(intToBin(memory[i]))     
