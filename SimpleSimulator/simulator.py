@@ -87,26 +87,11 @@ memins = ["ld", "st"]  # type D
 jmpins = ["jmp", "jlt", "jgt", "je", "hlt"]  # type E
 movfins = ["movf"]
 
-operatorOf = {
-    "add": operator.add,
-    "sub": operator.sub,
-    "mul": operator.mul,
-    "or": operator.__or__,
-    "and": operator.__and__,
-    "xor": operator.xor
-}
-
-
-
-def validImmediate(reg):
-    return 0 <= reg < 128
-# MAIN
-
-binary = getBinary()
-
 # FLOATING POINT INSTRUCTIONS
 def binToFloat(bn):
     # BIAS IS 3
+    if all([i == '0' for i in bn]):
+        return 0
     expPower = binToInt(bn[:3]) - 3
     # MANTISSA
     expBase = 1 + binToInt(bn[3:])/(1 << 5)
@@ -137,18 +122,39 @@ def floatToBin(flt):
         return ((fExp << 5) + flt)
 
 def addf(a, b):
-    f1 = binToFloat(intToByte(registers[a]))
-    f2 = binToFloat(intToByte(registers[b]))
+    f1 = binToFloat(intToByte(a))
+    f2 = binToFloat(intToByte(b))
     return floatToBin(f1 + f2)
 
 def subf(a, b):
-    f1 = binToFloat(intToByte(registers[a]))
-    f2 = binToFloat(intToByte(registers[b]))
+    f1 = binToFloat(intToByte(a))
+    f2 = binToFloat(intToByte(b))
     return floatToBin(f1 - f2)
 
 def movf(a, imm1):
     registers[a] = imm1
     return 0
+
+operatorOf = {
+    "add": operator.add,
+    "sub": operator.sub,
+    "mul": operator.mul,
+    "or": operator.__or__,
+    "and": operator.__and__,
+    "xor": operator.xor,
+    "addf": addf,
+    "subf": subf 
+}
+
+
+
+def validImmediate(reg):
+    return 0 <= reg < 128
+# MAIN
+
+binary = getBinary()
+
+
 
 
 for i in range(len(binary)):
@@ -172,7 +178,7 @@ while executing:
         if not validImmediate(registers[r1]):
             registers[r1] = 0
             # registers[FLAGS] |= 8  # forcefully set overflow flag
-            registers[FLAGS] |= 8  # REVIEW THIS
+            registers[FLAGS] = 8  # REVIEW THIS
             flagsWasSet = True
         next()
 
@@ -206,22 +212,16 @@ while executing:
             else:
                 registers[reg1] //= registers[reg2]
         elif ins == 'not':
-            registers[reg1] = 127 - registers[reg2]
+            registers[reg1] = ((1 << 16) - 1) - registers[reg2]
         else:
             # cmp
             flagsWasSet = True
             if registers[reg1] < registers[reg2]:
-                registers[FLAGS] |= 4
-                registers[FLAGS] &= 125  # 127 - 2
-                registers[FLAGS] &= 126  # 127 - 1
+                registers[FLAGS] = 4
             elif registers[reg1] == registers[reg2]:
-                registers[FLAGS] &= 123  # 127 - 4
-                registers[FLAGS] &= 125  # 127 - 2
-                registers[FLAGS] |= 1
+                registers[FLAGS] = 1
             else:
-                registers[FLAGS] &= 123
-                registers[FLAGS] |= 2
-                registers[FLAGS] &= 126
+                registers[FLAGS] = 2
         next()
 
     # type D
@@ -259,6 +259,7 @@ while executing:
         reg1 = binToInt(current[5:8])
         imm1 = binToInt(current[8:])
         registers[reg1] = imm1
+        next()
 
     if not flagsWasSet: 
         registers[FLAGS] = 0

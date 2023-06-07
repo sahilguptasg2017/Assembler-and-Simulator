@@ -296,7 +296,7 @@ memIndex = instr_count
 for i in varIndices:
     nm = inp_lines[i].strip().split()[1]
     if nm in var_dict:
-        al_lst.append(f"Error on line {i+1}: variable \"{nm}\" has already been declared.")
+        pass
     var_dict[nm] = memIndex
     memIndex += 1
 
