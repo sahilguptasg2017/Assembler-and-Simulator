@@ -24,6 +24,13 @@ def intToPC(n):
         n //= 2
     return s + ' ' * 8  # 8 spaces required by output for some reason
 
+def intToByte(n):
+    s = ""
+    for i in range(8):
+        s = chr(ord('0') + n % 2) + s
+        n //= 2
+    return s
+
 insCodeOf = {'00000': "add",
              '00001': 'sub',
              '00010': 'mov',
