@@ -20,6 +20,7 @@ opCodeOf={"add":'00000',
             'jgt':'11101',
             'je':'11111',
             'hlt':'11010',
+            # FLOATING POINT INSTRUCTIONS
             'addf':'10000',
             'subf':'10001',   
             'movf':'10010'
@@ -141,6 +142,7 @@ def float_to_binary(floating_number):
     
     return ''.join(bits)
 
+# CODE FOR MOVF
 def movf(ins,args,line_no):
     if(len(args) != 2):
         return f"Error on line {line_no+1}: Incorrect number of argumets in type B instruction"

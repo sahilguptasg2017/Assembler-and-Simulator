@@ -11,20 +11,22 @@ Code for the assembler assignment of CSE112 - Computer Organisation
 
 ## Evaluation
 
-Evaluation is in the standard format. The source code for the assembler is in the file `Simple-Assembler/main.py`.
+Evaluation is in the standard format. The source code for the assembler is in the file `Simple-Assembler/main.py` and `SimpleSimulator/simulator.py` for the simulator.
 
-To test, change your working directory to `automatedTesting` and run the evaluator with `./run --no-sim`.
+To test, change your working directory to `automatedTesting` and run the evaluator with `./run`, or `./run --no-sim` if only the assembler is to be evaluated.
 
 ## Code Documentation
 
-The assembler has been made in Python 3.
+### Assembler and Simulator
+
+The assembler and simulator have been made in Python 3.
 
 At the top of the code are definitions for global variables like register to binary conversion which will be used throughout the program.
 
-The `isvalid` function checks whether a string is a valid memory location or not.
+Then there are utility functions like `isvalid` in the assembler and `isValidImmediate` in the simulator which help do certain tasks in the program.
 
-Then there are 5 functions `ins_typeA` to `ins_typeE` which handle spefic instructions.
-
-Rest of the code is either handling non-trivial errors, parsing, etc.
+In the main loop of both, different instruction types are handled separately. 
 
 Input and Output are always `stdin` and `stdout` respectively.
+
+

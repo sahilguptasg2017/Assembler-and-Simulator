@@ -43,7 +43,11 @@ insCodeOf = {'00000': "add",
              '11100': 'jlt',
              '11101': 'jgt',
              '11111': 'je',
-             '11010': 'hlt'}
+             '11010': 'hlt',
+             # FLOATING POINT INSTRUCTIONS
+             '10000': 'addf',
+             '10001': 'subf',
+             '10010': 'movf'}
 
 # List for register addresses in binary
 registers = [0] * 8
@@ -67,11 +71,12 @@ def dumpState(oldPC):
     print(*[intToBin(i) for i in registers])
 
 # Counting number of vars
-reg3ins = ["add", "sub", "mul", "xor", "or", "and"]  # type A
+reg3ins = ["add", "sub", "mul", "xor", "or", "and", "addf", "subf"]  # type A
 immins = ["mov", "rs", "ls"]  # type B
 reg2ins = ["mov1", "div", "not", "cmp"]  # type C
 memins = ["ld", "st"]  # type D
 jmpins = ["jmp", "jlt", "jgt", "je", "hlt"]  # type E
+movfins = ["movf"]
 
 operatorOf = {
     "add": operator.add,
@@ -82,7 +87,6 @@ operatorOf = {
     "xor": operator.xor
 }
 
-#print(operatorOf["xor"](4, 4))
 
 
 def validImmediate(reg):
@@ -90,7 +94,53 @@ def validImmediate(reg):
 # MAIN
 
 binary = getBinary()
-#print(binary)
+
+# FLOATING POINT INSTRUCTIONS
+def binToFloat(bn):
+    # BIAS IS 3
+    expPower = binToInt(bn[:3]) - 3
+    # MANTISSA
+    expBase = 1 + binToInt(bn[3:])/(1 << 5)
+    return expBase**(expPower)
+
+def floatToBin(flt):
+    # BIAS
+    if flt <= 0:
+        return 0
+    fExp = 3
+    if flt < 1.0:
+        while flt < 1.0:
+            flt *= 2
+            fExp -= 1
+    elif flt >= 2.0:
+        while flt >= 2.0:
+            flt /= 2
+            fExp += 1
+    # OVERFLOW
+    if fExp < 0 or fExp > 7:
+        # 1 for overflow
+        return 0
+    else:
+        flt -= 1
+        flt *= 32
+        flt = int(flt)
+        # bitshifted by 5 for the format
+        return ((fExp << 5) + flt)
+
+def addf(a, b):
+    f1 = binToFloat(intToByte(registers[a]))
+    f2 = binToFloat(intToByte(registers[b]))
+    return floatToBin(f1 + f2)
+
+def subf(a, b):
+    f1 = binToFloat(intToByte(registers[a]))
+    f2 = binToFloat(intToByte(registers[b]))
+    return floatToBin(f1 - f2)
+
+def movf(a, imm1):
+    registers[a] = imm1
+    return 0
+
 
 for i in range(len(binary)):
     memory[i] = binToInt(binary[i])
@@ -176,7 +226,7 @@ while executing:
         next()
 
     # type E
-    else:
+    elif ins in jmpins:
         mem1 = binToInt(current[9:])
         if ins == 'jmp':
             PC = mem1 - 1
@@ -192,6 +242,12 @@ while executing:
         else:
             executing = False
         next()
+
+    # movf
+    else:
+        reg1 = binToInt(current[5:8])
+        imm1 = binToInt(current[8:])
+        registers[reg1] = imm1
 
     if not flagsWasSet: 
         registers[FLAGS] = 0
