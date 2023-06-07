@@ -47,7 +47,9 @@ insCodeOf = {'00000': "add",
              # FLOATING POINT INSTRUCTIONS
              '10000': 'addf',
              '10001': 'subf',
-             '10010': 'movf'}
+             '10010': 'movf',
+             # BONUS
+             '10011': 'nop'}
 
 # List for register addresses in binary
 registers = [0] * 8
@@ -239,6 +241,8 @@ while executing:
         elif ins == 'je':
             if registers[FLAGS] & 1:
                 PC = mem1 - 1
+        elif ins == 'nop':
+            pass
         else:
             executing = False
         next()

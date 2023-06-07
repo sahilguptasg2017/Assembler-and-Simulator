@@ -29,4 +29,14 @@ In the main loop of both, different instruction types are handled separately.
 
 Input and Output are always `stdin` and `stdout` respectively.
 
+### Floating point support
 
+In commit `2557b5`, support for the floating point instructions `addf`, `subf` and `movf` was added to the assembler and simulator.
+
+### Bonus- Extra instructions
+
+We added the `nop` instruction as the bonus part.
+
+It has no argument, and it simply does nothing.
+
+Its opcode is `10011`.

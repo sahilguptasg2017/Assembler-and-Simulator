@@ -23,7 +23,9 @@ opCodeOf={"add":'00000',
             # FLOATING POINT INSTRUCTIONS
             'addf':'10000',
             'subf':'10001',   
-            'movf':'10010'
+            'movf':'10010',
+            # EXTRA INSTRUCTIONS
+            'nop': '10011'
             }
 
 # Dictionary for register addresses in binary
@@ -48,7 +50,7 @@ reg3ins = ["add", "sub", "mul", "xor", "or", "and","addf","subf"] # type A
 immins = ["mov", "rs", "ls"] # type B
 reg2ins = ["mov1", "div", "not", "cmp"] # type C
 memins = ["ld", "st"] # type D
-jmpins = ["jmp", "jlt", "jgt", "je", "hlt"] # type E
+jmpins = ["jmp", "jlt", "jgt", "je", "hlt", "nop"] # type E
 #fmpins=["addf","subf"]#type F
 # check if valid memory address
 def isvalid(mem):
@@ -221,7 +223,7 @@ def ins_typeD(ins, args, line_no):
     return ins_str
 
 def ins_typeE(ins, args, line_no):
-    if ins == 'hlt':
+    if ins == 'hlt' or ins == 'nop':
         return opCodeOf['hlt'] + '0'*11
     if(len(args) != 1):
         return f"Error on line {line_no+1}: Incorrect number of argumets in type E instruction"
